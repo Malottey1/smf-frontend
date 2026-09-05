@@ -1,0 +1,287 @@
+/**
+ * Paged-media stylesheet for the WHO-format export preview (FR-SMF-09
+ * through FR-SMF-14). Loaded alongside design-system/tokens.css (see
+ * ExportPreview.tsx) so page content uses the same palette/type as the
+ * rest of the platform rather than inventing a separate export theme.
+ *
+ * This is the reference layout the server-side PDF/A renderer must
+ * match — see openapi/smf-api.yaml's /export/preview description.
+ */
+
+@page {
+  size: A4;
+  margin: 22mm 18mm 20mm;
+  @bottom-center {
+    content: counter(page);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--ink-faint);
+  }
+}
+@page cover {
+  @bottom-center {
+    content: "";
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  font-size: 10.5pt;
+  line-height: 1.55;
+}
+
+/* ---------- cover page ---------- */
+.cover-page {
+  page: cover;
+  break-after: page;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+.cover-eyebrow {
+  font-size: 10pt;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--teal);
+  margin-bottom: 14px;
+}
+.cover-page h1 {
+  font-family: var(--font-sans);
+  font-size: 24pt;
+  font-weight: 700;
+  color: var(--ink);
+  max-width: 32ch;
+  margin-bottom: 34px;
+}
+.cover-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 32px;
+  max-width: 420px;
+  margin-bottom: 40px;
+}
+.cover-meta dt {
+  font-size: 8.5pt;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  margin-bottom: 3px;
+}
+.cover-meta dd {
+  font-family: var(--font-mono);
+  font-size: 12pt;
+  color: var(--ink);
+}
+.cover-standard {
+  font-size: 9pt;
+  color: var(--ink-faint);
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  max-width: 420px;
+}
+
+/* ---------- table of contents ---------- */
+.toc-page {
+  break-after: page;
+}
+.toc-page h2 {
+  font-size: 15pt;
+  font-weight: 700;
+  margin-bottom: 22px;
+}
+.toc-group-label {
+  font-size: 8.5pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  margin: 18px 0 6px;
+}
+.toc-group-label:first-child {
+  margin-top: 0;
+}
+.toc-entry {
+  display: flex;
+  align-items: baseline;
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 10pt;
+  padding: 4px 0;
+}
+.toc-label {
+  flex: 0 0 auto;
+}
+.toc-leader {
+  flex: 1;
+  margin: 0 6px 2px;
+  border-bottom: 1px dotted var(--line);
+}
+/* Real page numbers via Paged.js's CSS target-counter support — not
+   hand-computed. Falls back silently to a blank if unsupported. */
+.toc-entry::after {
+  content: target-counter(attr(href), page);
+  font-family: var(--font-mono);
+  font-size: 9.5pt;
+  color: var(--ink-soft);
+}
+
+/* ---------- chapter / annex structure ---------- */
+.doc-chapter {
+  break-before: page;
+}
+.doc-chapter h2,
+.doc-annex h2,
+.doc-annexes-intro h2,
+.doc-appendices-intro h2 {
+  font-size: 15pt;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.chapter-num,
+.annex-num {
+  font-family: var(--font-mono);
+  font-size: 10pt;
+  font-weight: 700;
+  color: var(--teal);
+  background: var(--teal-wash);
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+.doc-citation {
+  font-family: var(--font-mono);
+  font-size: 8.5pt;
+  color: var(--ink-faint);
+  margin-bottom: 4px;
+}
+.doc-annexes-intro {
+  break-before: page;
+}
+
+.doc-subclause {
+  border-left: 2px solid var(--line);
+  padding-left: 14px;
+  margin: 18px 0;
+}
+.doc-subclause h3 {
+  font-size: 11pt;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.subclause-ref {
+  font-size: 9pt;
+  color: var(--teal);
+  background: var(--teal-wash);
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+.doc-field {
+  margin-bottom: 12px;
+  break-inside: avoid;
+}
+.doc-field-label {
+  font-size: 8.5pt;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-bottom: 3px;
+}
+/* Generous reading measure, capped independently of page width. */
+.doc-field-value {
+  max-width: 68ch;
+  white-space: pre-wrap;
+}
+.doc-empty {
+  color: var(--ink-faint);
+  font-style: italic;
+  font-size: 10pt;
+}
+.doc-file-ref {
+  font-size: 9.5pt;
+}
+.doc-image-size {
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.doc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: none;
+}
+.doc-chip {
+  font-size: 9pt;
+  background: var(--wash);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  padding: 2px 9px;
+}
+
+table.doc-table {
+  width: 100%;
+  max-width: 68ch;
+  border-collapse: collapse;
+  font-size: 9pt;
+  margin-top: 4px;
+}
+table.doc-table th {
+  text-align: left;
+  font-size: 8pt;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  padding: 5px 8px;
+  background: var(--wash);
+  border-bottom: 1px solid var(--line);
+}
+table.doc-table td {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Chapters 4.1/4.1.2, Annexes 5-7 — favor image rendering over narrative
+   text, per FR-SMF-12. Actual bytes aren't available in this preview
+   (see DECISIONS.md); this frame is what carries the real uploaded image
+   once storage returns real files. */
+.doc-image-frame {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--wash);
+  padding: 22px;
+  text-align: center;
+  margin-bottom: 8px;
+  break-inside: avoid;
+}
+.doc-image-glyph {
+  font-size: 22pt;
+  margin-bottom: 6px;
+}
+.doc-image-caption {
+  font-size: 9pt;
+  color: var(--ink-soft);
+}
+
+.doc-appendices-intro {
+  break-before: page;
+}
+.advisory-tag {
+  font-size: 8pt;
+  font-weight: 600;
+  color: var(--amber);
+  background: var(--amber-wash);
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}

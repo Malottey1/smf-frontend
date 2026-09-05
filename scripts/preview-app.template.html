@@ -1,0 +1,718 @@
+<title>SMF Workspace</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.js"></script>
+<style>
+  :root {
+    --bg: #f7f9fc;
+    --surface: #ffffff;
+    --surface-2: #eef2f9;
+    --ink: #0e1626;
+    --ink-muted: #57687f;
+    --ink-faint: #93a1b5;
+    --border: #dce3ed;
+    --accent: #1a56db;
+    --accent-soft: #e8eefc;
+    --mint: #0e9f6e;
+    --mint-soft: #e3f9f0;
+    --amber: #a4560a;
+    --amber-soft: #fbebd6;
+    --violet: #6d4acb;
+    --violet-soft: #eee8fb;
+    --shadow: 0 1px 2px rgba(14, 22, 38, 0.04), 0 8px 24px -12px rgba(14, 22, 38, 0.12);
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b1220; --surface: #121b2e; --surface-2: #17223a;
+      --ink: #e7ecf6; --ink-muted: #a6b3c9; --ink-faint: #6c7c97;
+      --border: #223047; --accent: #6d93f5; --accent-soft: #1b2a4d;
+      --mint: #34d399; --mint-soft: #113228; --amber: #f0b65c; --amber-soft: #3a2a10;
+      --violet: #b39dfa; --violet-soft: #241b40;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b1220; --surface: #121b2e; --surface-2: #17223a;
+    --ink: #e7ecf6; --ink-muted: #a6b3c9; --ink-faint: #6c7c97;
+    --border: #223047; --accent: #6d93f5; --accent-soft: #1b2a4d;
+    --mint: #34d399; --mint-soft: #113228; --amber: #f0b65c; --amber-soft: #3a2a10;
+    --violet: #b39dfa; --violet-soft: #241b40;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.5; -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; text-wrap: balance; margin: 0; }
+  code { font-family: var(--mono); }
+  button { font-family: inherit; cursor: pointer; }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 1px;
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+  .app-shell { display: flex; flex-direction: column; height: 100vh; }
+  .app-body { display: flex; flex: 1; min-height: 0; }
+
+  /* Top bar */
+  .topbar-wrap { border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0; }
+  .topbar { display: flex; align-items: center; gap: 18px; padding: 12px 20px; flex-wrap: wrap; }
+  .topbar-brand { display: flex; align-items: baseline; gap: 8px; margin-right: 4px; }
+  .brand-mark { font-family: "Plus Jakarta Sans"; font-weight: 800; font-size: 16px; letter-spacing: -0.01em; }
+  .brand-sub { color: var(--ink-muted); font-size: 12.5px; }
+  .demo-badge { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent); background: var(--accent-soft); padding: 2px 7px; border-radius: 100px; margin-left: 6px; }
+
+  .status-badge { display: flex; flex-direction: column; gap: 1px; padding: 6px 16px; border-radius: 10px; font-weight: 700; font-size: 13.5px; }
+  .status-badge .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; background: currentColor; }
+  .status-sub { font-weight: 500; font-size: 11px; opacity: 0.85; font-variant-numeric: tabular-nums; }
+  .status-draft { background: var(--amber-soft); color: var(--amber); }
+  .status-review { background: var(--accent-soft); color: var(--accent); }
+  .status-approved { background: var(--mint-soft); color: var(--mint); }
+  .status-historical { background: var(--violet-soft); color: var(--violet); }
+
+  .topbar-right { display: flex; align-items: center; gap: 12px; margin-left: auto; flex-wrap: wrap; }
+  .view-switch { display: flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; }
+  .vs-btn { background: var(--surface); color: var(--ink-muted); border: none; padding: 6px 12px; font-size: 12.5px; font-weight: 600; border-right: 1px solid var(--border); }
+  .vs-btn:last-child { border-right: none; }
+  .vs-btn:disabled { color: var(--ink-faint); cursor: not-allowed; }
+  .vs-active { background: var(--accent-soft); color: var(--accent); }
+  .completion-ring .ring-text { font-family: "Plus Jakarta Sans"; font-weight: 800; font-size: 12.5px; fill: var(--ink); }
+  .btn { border: none; border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 700; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: color-mix(in srgb, var(--accent) 88%, black); }
+  .btn-ghost { background: var(--surface-2); color: var(--ink); border: 1px solid var(--border); }
+  .review-actions { display: flex; gap: 8px; }
+  .reject-panel { display: flex; gap: 10px; align-items: flex-start; padding: 12px 20px 16px; border-top: 1px dashed var(--border); flex-wrap: wrap; }
+  .reject-panel .ctl { max-width: 260px; }
+  .reject-panel textarea { flex: 1; min-width: 220px; }
+
+  /* Sidebar */
+  .sidebar { width: 250px; flex-shrink: 0; overflow-y: auto; border-right: 1px solid var(--border); background: var(--surface-2); padding: 16px 12px 40px; }
+  .sidebar-group-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); padding: 12px 8px 6px; }
+  .sidebar-group-label:first-child { padding-top: 2px; }
+  .nav-item { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; background: none; border: none; border-radius: 8px; padding: 7px 8px; font-size: 13px; color: var(--ink-muted); font-weight: 500; }
+  .nav-item:hover { background: var(--surface); color: var(--ink); }
+  .nav-item-active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); font-weight: 600; }
+  .nav-item-num { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); width: 16px; flex-shrink: 0; }
+  .nav-item-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .nav-item-pct { font-variant-numeric: tabular-nums; font-size: 11px; color: var(--ink-faint); flex-shrink: 0; }
+  .nav-item-pct-done { color: var(--mint); font-weight: 700; }
+
+  /* Main panel */
+  .main-panel { flex: 1; overflow-y: auto; padding: 26px clamp(20px, 3vw, 44px) 80px; min-width: 0; }
+  .section-head { margin-bottom: 6px; }
+  .section-head h2 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+  .section-desc { color: var(--ink-muted); font-size: 13.5px; max-width: 70ch; margin: 0 0 20px; }
+
+  .comment-banner { background: var(--amber-soft); border: 1px solid color-mix(in srgb, var(--amber) 35%, transparent); border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; }
+  .comment-banner strong { color: var(--amber); font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .comment-banner p { margin: 4px 0 0; color: var(--ink); font-size: 13.5px; }
+
+  .chapter-view-head { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 2px solid var(--border); }
+  .chapter-num-badge { font-family: "Plus Jakarta Sans"; font-weight: 800; font-size: 15px; color: var(--accent); background: var(--accent-soft); width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 9px; margin-right: 10px; }
+  .chapter-view-head h2 { display: inline; font-size: 19px; font-weight: 800; }
+  .chapter-view-head .citation { display: block; font-family: var(--mono); font-size: 11px; color: var(--ink-faint); margin-top: 3px; margin-left: 42px; }
+  .save-indicator { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+  .save-indicator[data-state="saving"] { color: var(--accent); }
+  .save-indicator[data-state="saved"] { color: var(--mint); }
+
+  .subclause-block { padding: 18px 0 22px 20px; border-left: 2px solid var(--border); margin-bottom: 4px; position: relative; }
+  .subclause-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+  .subclause-ref { position: absolute; left: -11px; top: 20px; background: var(--surface-2); color: var(--accent); font-weight: 700; font-size: 11.5px; padding: 2px 6px; border-radius: 6px; border: 1px solid var(--border); }
+  .subclause-head h3 { font-size: 14.5px; font-weight: 700; margin-left: 46px; }
+
+  .field-block { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px 16px; margin: 0 0 12px 0; box-shadow: var(--shadow); }
+  .field-label-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .field-label { font-weight: 600; font-size: 13.5px; }
+  .field-help { font-size: 12px; color: var(--ink-muted); margin: -4px 0 9px; }
+  .field-citation { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); margin-top: 9px; }
+
+  .tag { display: inline-flex; align-items: center; font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 100px; white-space: nowrap; }
+  .tag-required { background: var(--surface-2); color: var(--ink-muted); border: 1px solid var(--border); }
+  .tag-optional { background: var(--surface-2); color: var(--ink-faint); border: 1px solid var(--border); }
+  .tag-conditional { background: var(--amber-soft); color: var(--amber); }
+  .tag-dating { background: var(--mint-soft); color: var(--mint); }
+  .tag-advisory { background: var(--amber-soft); color: var(--amber); }
+
+  .ctl { width: 100%; border: 1px solid var(--border); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 8px 10px; font-size: 13px; font-family: inherit; }
+  .ctl:disabled { background: var(--surface-2); color: var(--ink-muted); }
+  .ctl-sm { width: auto; padding: 6px 8px; font-size: 12.5px; }
+  .ctl-textarea { resize: vertical; font-family: inherit; }
+  .ctl-note { font-size: 11.5px; color: var(--ink-faint); margin-top: 5px; }
+  .ctl-num { width: 100px; }
+  .numeric-range, .numeric-single { display: flex; align-items: center; gap: 8px; }
+  .range-sep { color: var(--ink-faint); }
+  .unit { font-size: 12px; color: var(--ink-muted); }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chip { border: 1px solid var(--border); background: var(--surface); color: var(--ink-muted); border-radius: 100px; padding: 5px 12px; font-size: 12px; font-weight: 600; }
+  .chip-active { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+  .chip-static { background: var(--surface-2); color: var(--ink); }
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
+  table.rt-table { width: 100%; border-collapse: collapse; font-size: 12.8px; }
+  table.rt-table th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-faint); font-weight: 700; padding: 8px 10px; background: var(--surface-2); border-bottom: 1px solid var(--border); white-space: nowrap; }
+  table.rt-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  table.rt-table tr:last-child td { border-bottom: none; }
+  .ctl-cell { padding: 5px 7px; font-size: 12.5px; }
+  .icon-btn { background: none; border: none; color: var(--ink-faint); font-size: 12px; padding: 4px; }
+  .icon-btn:hover { color: var(--amber); }
+  .add-row-btn { display: block; width: 100%; background: var(--surface-2); border: none; border-top: 1px solid var(--border); color: var(--accent); font-weight: 600; font-size: 12.5px; padding: 8px; }
+  .add-row-btn:hover { background: var(--accent-soft); }
+
+  .file-field, .toggle-field, .map-field { display: flex; flex-direction: column; gap: 9px; }
+  .file-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .file-chip { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 5px 9px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; }
+  .file-chip em { color: var(--ink-faint); font-style: normal; font-variant-numeric: tabular-nums; }
+  .chip-x { background: none; border: none; color: var(--ink-faint); font-size: 11px; padding: 0; margin-left: 2px; }
+  .upload-btn { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; background: var(--surface); border: 1px dashed var(--accent); color: var(--accent); font-weight: 600; font-size: 12.5px; padding: 7px 13px; border-radius: 8px; }
+  .upload-btn:hover { background: var(--accent-soft); }
+  .upload-btn-sm { font-size: 11.5px; padding: 5px 10px; }
+
+  .switch-row { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .switch { position: relative; display: inline-block; }
+  .switch input { position: absolute; opacity: 0; width: 34px; height: 20px; margin: 0; cursor: pointer; }
+  .switch-track { display: block; width: 34px; height: 20px; background: var(--border); border-radius: 100px; position: relative; transition: background 0.15s; }
+  .switch-thumb { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: var(--surface); border-radius: 50%; transition: transform 0.15s; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+  .switch[data-on="true"] .switch-track { background: var(--accent); }
+  .switch[data-on="true"] .switch-thumb { transform: translateX(14px); }
+
+  .map-placeholder { display: flex; align-items: center; gap: 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; color: var(--ink-faint); font-size: 12px; }
+  .map-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+
+  .ro-text { font-size: 13.5px; color: var(--ink); white-space: pre-wrap; }
+  .ro-richtext { line-height: 1.6; }
+  .ro-empty { font-size: 13px; color: var(--ink-faint); font-style: italic; }
+  table.ro-table td { font-size: 12.8px; color: var(--ink); }
+
+  .annex-grid, .appendix-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; }
+  .annex-card { border: 1px solid var(--border); border-radius: 12px; background: var(--surface); padding: 16px 18px; box-shadow: var(--shadow); }
+  .annex-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .annex-badge { font-family: "Plus Jakarta Sans"; font-weight: 800; font-size: 12.5px; color: var(--mint); }
+  .annex-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .citation { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
+  .annex-date-row { display: flex; align-items: center; gap: 8px; margin: 12px 0 8px; }
+  .annex-date-row label { font-size: 12px; color: var(--ink-muted); font-weight: 600; white-space: nowrap; }
+  .annex-meta-line { font-size: 11.5px; color: var(--ink-muted); }
+  .meta-label { color: var(--ink-faint); font-weight: 600; margin-right: 4px; }
+
+  .appendix-card { border: 1px dashed color-mix(in srgb, var(--amber) 45%, var(--border)); background: var(--amber-soft); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 9px; }
+  .appendix-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .appendix-head h4 { font-size: 13.5px; font-weight: 700; }
+  .appendix-desc { font-size: 12.3px; color: var(--ink-muted); margin: 0; }
+  .provenance { font-size: 11px; color: var(--ink-faint); }
+</style>
+
+<div id="root"></div>
+
+<script>
+  const html = htm.bind(React.createElement);
+  const TEMPLATE = /*__TEMPLATE_JSON__*/{}/*__END_TEMPLATE_JSON__*/;
+
+  const DOSAGE_FORM_OPTIONS = ["Tablets", "Capsules", "Oral liquids", "Small-volume injectables", "Large-volume injectables", "Creams & ointments", "Suppositories", "Powders for reconstitution"];
+
+  function resolveOptions(field) {
+    if (field.options) return field.options;
+    if (field.optionsSource === "annex-2.dosageFormsList.dosageForm") return DOSAGE_FORM_OPTIONS;
+    return [];
+  }
+
+  function evaluateCondition(condition, values) {
+    if (!condition) return true;
+    const raw = values[condition.fieldId];
+    const actual = condition.field === "toggle" ? !!(raw && raw.toggle) : raw;
+    return condition.operator === "equals" ? actual === condition.value : actual !== condition.value;
+  }
+
+  function isFilled(field, value) {
+    if (value == null) return false;
+    switch (field.inputType) {
+      case "text": case "phone": case "dropdown": case "richText":
+        return typeof value === "string" && value.trim() !== "";
+      case "multiSelect":
+        return Array.isArray(value) && value.length > 0;
+      case "structuredNumeric":
+        if (field.range) return !!value && value.min !== "" && value.min != null && value.max !== "" && value.max != null;
+        return value !== "" && value != null;
+      case "repeatableTable":
+        return Array.isArray(value) && value.length >= (field.minRows || 1);
+      case "fileUpload":
+        return Array.isArray(value) && value.length > 0;
+      case "toggleWithText":
+        return !!(value && (value.toggle || (value.text && value.text.trim() !== "")));
+      case "mapPicker":
+        return !!(value && ((value.lat && value.lng) || value.dunsNumber || value.otherIdentifier));
+      default:
+        return false;
+    }
+  }
+
+  function fieldsForChapter(chapter) {
+    return chapter.subClauses.flatMap((sc) => sc.fields);
+  }
+
+  function chapterCompletion(chapter, values) {
+    const fields = fieldsForChapter(chapter);
+    let required = 0, done = 0;
+    fields.forEach((f) => {
+      const counts = f.required || (f.condition && evaluateCondition(f.condition, values));
+      if (!counts) return;
+      required++;
+      if (isFilled(f, values[f.id])) done++;
+    });
+    return { required, done, percent: required === 0 ? 100 : Math.round((done / required) * 100) };
+  }
+
+  function overallCompletion(values) {
+    let required = 0, done = 0;
+    TEMPLATE.chapters.forEach((c) => {
+      const r = chapterCompletion(c, values);
+      required += r.required;
+      done += r.done;
+    });
+    return required === 0 ? 100 : Math.round((done / required) * 100);
+  }
+
+  function formatBytes(n) {
+    if (n < 1024) return n + " B";
+    if (n < 1024 * 1024) return (n / 1024).toFixed(0) + " KB";
+    return (n / 1024 / 1024).toFixed(1) + " MB";
+  }
+
+  function FieldInput({ field, value, onChange, disabled }) {
+    switch (field.inputType) {
+      case "text":
+        return html`<input className="ctl" type="text" value=${value || ""} disabled=${disabled} onChange=${(e) => onChange(e.target.value)} />`;
+      case "phone":
+        return html`<input className="ctl" type="tel" value=${value || ""} disabled=${disabled} onChange=${(e) => onChange(e.target.value)} placeholder="+233 ..." />`;
+      case "richText":
+        return html`<div>
+          <textarea className="ctl ctl-textarea" rows="4" value=${value || ""} disabled=${disabled} onChange=${(e) => onChange(e.target.value)}></textarea>
+          <div className="ctl-note">Plain-text preview here — production build uses the locked TipTap schema (headings, bold, italic, lists, tables, superscript).</div>
+        </div>`;
+      case "dropdown": {
+        const opts = resolveOptions(field);
+        return html`<select className="ctl" value=${value || ""} disabled=${disabled} onChange=${(e) => onChange(e.target.value)}>
+          <option value="">Select…</option>
+          ${opts.map((o) => html`<option value=${o}>${o}</option>`)}
+        </select>`;
+      }
+      case "multiSelect": {
+        const opts = resolveOptions(field);
+        const sel = value || [];
+        return html`<div className="chip-row">
+          ${opts.map((o) => html`<button type="button" disabled=${disabled} className=${"chip" + (sel.includes(o) ? " chip-active" : "")}
+            onClick=${() => onChange(sel.includes(o) ? sel.filter((x) => x !== o) : [...sel, o])}>${o}</button>`)}
+        </div>`;
+      }
+      case "structuredNumeric": {
+        if (field.range) {
+          const v = value || {};
+          return html`<div className="numeric-range">
+            <input className="ctl ctl-num" type="number" disabled=${disabled} value=${v.min ?? ""} placeholder="Min" onChange=${(e) => onChange({ ...v, min: e.target.value })} />
+            <span className="range-sep">–</span>
+            <input className="ctl ctl-num" type="number" disabled=${disabled} value=${v.max ?? ""} placeholder="Max" onChange=${(e) => onChange({ ...v, max: e.target.value })} />
+            <span className="unit">${field.unit || ""}</span>
+          </div>`;
+        }
+        return html`<div className="numeric-single">
+          <input className="ctl ctl-num" type="number" disabled=${disabled} value=${value ?? ""} onChange=${(e) => onChange(e.target.value)} />
+          <span className="unit">${field.unit || ""}</span>
+        </div>`;
+      }
+      case "repeatableTable": {
+        const rows = value || [];
+        const cols = field.columns || [];
+        const setCell = (ri, colId, v) => onChange(rows.map((r, i) => (i === ri ? { ...r, [colId]: v } : r)));
+        const addRow = () => onChange([...rows, Object.fromEntries(cols.map((c) => [c.id, ""]))]);
+        const removeRow = (ri) => onChange(rows.filter((_, i) => i !== ri));
+        return html`<div className="table-wrap">
+          <table className="rt-table">
+            <thead><tr>${cols.map((c) => html`<th>${c.label}</th>`)}<th></th></tr></thead>
+            <tbody>
+              ${rows.map((row, ri) => html`<tr>
+                ${cols.map((c) => html`<td>
+                  ${c.inputType === "dropdown"
+                    ? html`<select className="ctl ctl-cell" disabled=${disabled} value=${row[c.id] || ""} onChange=${(e) => setCell(ri, c.id, e.target.value)}>
+                        <option value="">–</option>
+                        ${(c.options || []).map((o) => html`<option value=${o}>${o}</option>`)}
+                      </select>`
+                    : html`<input className="ctl ctl-cell" disabled=${disabled} value=${row[c.id] || ""} onChange=${(e) => setCell(ri, c.id, e.target.value)} />`}
+                </td>`)}
+                <td>${!disabled ? html`<button type="button" className="icon-btn" onClick=${() => removeRow(ri)} aria-label="Remove row">✕</button>` : null}</td>
+              </tr>`)}
+            </tbody>
+          </table>
+          ${!disabled ? html`<button type="button" className="add-row-btn" onClick=${addRow}>+ Add row</button>` : null}
+        </div>`;
+      }
+      case "fileUpload": {
+        const files = value || [];
+        const onPick = (e) => {
+          const picked = Array.from(e.target.files || []).map((f) => ({ name: f.name, size: formatBytes(f.size) }));
+          onChange([...files, ...picked]);
+          e.target.value = "";
+        };
+        return html`<div className="file-field">
+          <div className="file-chips">
+            ${files.map((f, i) => html`<span className="file-chip">📎 ${f.name} <em>${f.size}</em>
+              ${!disabled ? html`<button type="button" className="chip-x" onClick=${() => onChange(files.filter((_, j) => j !== i))}>✕</button>` : null}
+            </span>`)}
+          </div>
+          ${!disabled ? html`<label className="upload-btn">Upload file${field.maxFiles === 1 ? "" : "s"}
+            <input type="file" multiple=${field.maxFiles !== 1} style=${{ display: "none" }} onChange=${onPick} />
+          </label>` : null}
+        </div>`;
+      }
+      case "toggleWithText": {
+        const v = value || { toggle: false, text: "" };
+        return html`<div className="toggle-field">
+          <label className="switch-row">
+            <span className="switch" data-on=${v.toggle}>
+              <input type="checkbox" checked=${v.toggle} disabled=${disabled} onChange=${(e) => onChange({ ...v, toggle: e.target.checked })} />
+              <span className="switch-track"><span className="switch-thumb"></span></span>
+            </span>
+            <span>${field.toggleLabel}</span>
+          </label>
+          <textarea className="ctl ctl-textarea" rows="2" disabled=${disabled} value=${v.text || ""} placeholder=${field.textLabel} onChange=${(e) => onChange({ ...v, text: e.target.value })}></textarea>
+        </div>`;
+      }
+      case "mapPicker": {
+        const v = value || {};
+        return html`<div className="map-field">
+          <div className="map-placeholder" aria-hidden="true">
+            <svg viewBox="0 0 120 70" width="70" height="42"><rect width="120" height="70" rx="8" fill="var(--surface)" /><path d="M60 18c-8 0-14 6-14 14 0 10 14 24 14 24s14-14 14-24c0-8-6-14-14-14z" fill="var(--accent)" opacity="0.85" /><circle cx="60" cy="32" r="5" fill="var(--surface)" /></svg>
+            <span>Interactive map disabled in this preview — production build uses a live map picker.</span>
+          </div>
+          <div className="map-inputs">
+            <input className="ctl" placeholder="Latitude" disabled=${disabled} value=${v.lat || ""} onChange=${(e) => onChange({ ...v, lat: e.target.value })} />
+            <input className="ctl" placeholder="Longitude" disabled=${disabled} value=${v.lng || ""} onChange=${(e) => onChange({ ...v, lng: e.target.value })} />
+            <input className="ctl" placeholder="D-U-N-S number" disabled=${disabled} value=${v.dunsNumber || ""} onChange=${(e) => onChange({ ...v, dunsNumber: e.target.value })} />
+            <input className="ctl" placeholder="Other identifier" disabled=${disabled} value=${v.otherIdentifier || ""} onChange=${(e) => onChange({ ...v, otherIdentifier: e.target.value })} />
+          </div>
+          <div className="ctl-note">At least one identifier is required.</div>
+        </div>`;
+      }
+      default:
+        return html`<div className="ctl-note">Unsupported field type: ${field.inputType}</div>`;
+    }
+  }
+
+  function FieldValue({ field, value }) {
+    if (!isFilled(field, value)) return html`<div className="ro-empty">Not provided</div>`;
+    switch (field.inputType) {
+      case "text": case "phone": case "dropdown": case "richText":
+        return html`<div className="ro-text">${value}</div>`;
+      case "multiSelect":
+        return html`<div className="chip-row">${(value || []).map((o) => html`<span className="chip chip-static">${o}</span>`)}</div>`;
+      case "structuredNumeric":
+        return field.range
+          ? html`<div className="ro-text">${value.min} – ${value.max} ${field.unit || ""}</div>`
+          : html`<div className="ro-text">${value} ${field.unit || ""}</div>`;
+      case "repeatableTable":
+        return html`<div className="table-wrap"><table className="rt-table ro-table">
+          <thead><tr>${(field.columns || []).map((c) => html`<th>${c.label}</th>`)}</tr></thead>
+          <tbody>${(value || []).map((row) => html`<tr>${(field.columns || []).map((c) => html`<td>${row[c.id] || "—"}</td>`)}</tr>`)}</tbody>
+        </table></div>`;
+      case "fileUpload":
+        return html`<div className="file-chips">${(value || []).map((f) => html`<span className="file-chip">📎 ${f.name} <em>${f.size}</em></span>`)}</div>`;
+      case "toggleWithText": {
+        const v = value || {};
+        return html`<div className="ro-text">${v.toggle ? v.text || "Yes" : "No"}</div>`;
+      }
+      case "mapPicker": {
+        const v = value || {};
+        const parts = [];
+        if (v.lat && v.lng) parts.push(`${v.lat}, ${v.lng}`);
+        if (v.dunsNumber) parts.push("D-U-N-S " + v.dunsNumber);
+        if (v.otherIdentifier) parts.push(v.otherIdentifier);
+        return html`<div className="ro-text">${parts.join(" · ")}</div>`;
+      }
+      default:
+        return html`<div className="ro-text">—</div>`;
+    }
+  }
+
+  function FieldBlock({ field, value, onChange, editable, hidden }) {
+    if (hidden) return null;
+    return html`<div className="field-block">
+      <div className="field-label-row">
+        <span className="field-label">${field.label}</span>
+        ${field.condition ? html`<span className="tag tag-conditional">Conditional</span>` : field.required ? html`<span className="tag tag-required">Required</span>` : html`<span className="tag tag-optional">Optional</span>`}
+      </div>
+      ${field.helpText ? html`<div className="field-help">${field.helpText}</div>` : null}
+      ${editable ? html`<${FieldInput} field=${field} value=${value} onChange=${onChange} disabled=${false} />` : html`<${FieldValue} field=${field} value=${value} />`}
+      <div className="field-citation">${field.whoCitation}</div>
+    </div>`;
+  }
+
+  function ChapterView({ chapter, values, onFieldChange, editable, savingState, comment }) {
+    return html`<div>
+      ${comment ? html`<div className="comment-banner"><strong>QA reviewer comment</strong><p>${comment.text}</p></div>` : null}
+      <div className="chapter-view-head">
+        <div><span className="chapter-num-badge">${chapter.number}</span><h2>${chapter.title}</h2>
+          <span className="citation">${chapter.whoCitation}</span>
+        </div>
+        ${editable && savingState ? html`<div className="save-indicator" data-state=${savingState.state}>${savingState.state === "saving" ? "Saving…" : "Saved " + savingState.time}</div>` : null}
+      </div>
+      ${chapter.subClauses.map((sc) => html`<section className="subclause-block">
+        <div className="subclause-head"><code className="subclause-ref">${sc.ref}</code><h3>${sc.title}</h3></div>
+        ${sc.fields.map((f) => {
+          const hidden = f.condition ? !evaluateCondition(f.condition, values) : false;
+          return html`<${FieldBlock} field=${f} value=${values[f.id]} hidden=${hidden} editable=${editable} onChange=${(v) => onFieldChange(f.id, v)} />`;
+        })}
+      </section>`)}
+    </div>`;
+  }
+
+  function AnnexesView({ annexDates, onDateChange, editable }) {
+    return html`<div>
+      <div className="section-head"><h2>Annexes 1–8</h2>
+        <p className="section-desc">Each annex carries its own effective date, independent of the parent document (FR-SMF-03) — updating one never re-versions Chapters 1–9.</p>
+      </div>
+      <div className="annex-grid">
+        ${TEMPLATE.annexes.map((a) => html`<div className="annex-card">
+          <div className="annex-card-head"><span className="annex-badge">Annex ${a.number}</span><span className="tag tag-dating">Independently dated</span></div>
+          <h3>${a.title}</h3>
+          <div className="citation">${a.whoCitation}</div>
+          <div className="annex-date-row"><label>Effective date</label>
+            <input type="date" className="ctl ctl-sm" disabled=${!editable} value=${annexDates[a.id] || ""} onChange=${(e) => onDateChange(a.id, e.target.value)} />
+          </div>
+          <div className="annex-meta-line"><span className="meta-label">Linked from</span> ${a.linkedFromRefs.join(", ")}</div>
+        </div>`)}
+      </div>
+    </div>`;
+  }
+
+  function JurisdictionView({ files, onFilesChange, editable }) {
+    const profile = TEMPLATE.jurisdictionProfiles[0];
+    return html`<div>
+      <div className="section-head"><h2>${profile.name} — supplementary appendices</h2>
+        <p className="section-desc">Advisory checklist only (FR-SMF-16) — nothing here can block submission. Ghana FDA has not yet confirmed this list against its own published guidance.</p>
+      </div>
+      <div className="appendix-grid">
+        ${profile.supplementaryAppendices.map((ap) => html`<div className="appendix-card">
+          <div className="appendix-head"><h4>${ap.title}</h4><span className="tag tag-advisory">Advisory · never blocks</span></div>
+          <p className="appendix-desc">${ap.description}</p>
+          <div className="file-chips">${(files[ap.id] || []).map((f) => html`<span className="file-chip">📎 ${f.name} <em>${f.size}</em></span>`)}</div>
+          ${editable ? html`<label className="upload-btn upload-btn-sm">Upload
+            <input type="file" style=${{ display: "none" }} onChange=${(e) => {
+              const picked = Array.from(e.target.files || []).map((f) => ({ name: f.name, size: formatBytes(f.size) }));
+              onFilesChange(ap.id, [...(files[ap.id] || []), ...picked]);
+              e.target.value = "";
+            }} />
+          </label>` : null}
+          <div className="provenance">${ap.provenance}</div>
+        </div>`)}
+      </div>
+    </div>`;
+  }
+
+  function CompletionRing({ percent }) {
+    const r = 20, c = 2 * Math.PI * r;
+    const offset = c * (1 - percent / 100);
+    return html`<svg width="46" height="46" viewBox="0 0 52 52" className="completion-ring">
+      <circle cx="26" cy="26" r=${r} fill="none" stroke="var(--border)" strokeWidth="5" />
+      <circle cx="26" cy="26" r=${r} fill="none" stroke="var(--accent)" strokeWidth="5" strokeLinecap="round" strokeDasharray=${c} strokeDashoffset=${offset} transform="rotate(-90 26 26)" />
+      <text x="26" y="30" textAnchor="middle" className="ring-text">${percent}%</text>
+    </svg>`;
+  }
+
+  function Sidebar({ activeSection, activeChapter, onSelectSection, values }) {
+    return html`<nav className="sidebar">
+      <div className="sidebar-group-label">Chapters</div>
+      ${TEMPLATE.chapters.map((c) => {
+        const comp = chapterCompletion(c, values);
+        const active = activeSection === "chapter" && activeChapter === c.number;
+        return html`<button type="button" className=${"nav-item" + (active ? " nav-item-active" : "")} onClick=${() => onSelectSection("chapter", c.number)}>
+          <span className="nav-item-num">${c.number}</span>
+          <span className="nav-item-label">${c.title}</span>
+          <span className=${"nav-item-pct" + (comp.percent === 100 ? " nav-item-pct-done" : "")}>${comp.percent}%</span>
+        </button>`;
+      })}
+      <div className="sidebar-group-label">Reference</div>
+      <button type="button" className=${"nav-item" + (activeSection === "annexes" ? " nav-item-active" : "")} onClick=${() => onSelectSection("annexes")}>
+        <span className="nav-item-num">§</span><span className="nav-item-label">Annexes 1–8</span>
+      </button>
+      <button type="button" className=${"nav-item" + (activeSection === "jurisdiction" ? " nav-item-active" : "")} onClick=${() => onSelectSection("jurisdiction")}>
+        <span className="nav-item-num">GH</span><span className="nav-item-label">Ghana appendices</span>
+      </button>
+    </nav>`;
+  }
+
+  function TopBar(props) {
+    const { viewMode, setViewMode, docStatus, editions, historicalEdition, setHistoricalEdition,
+      overallPercent, onSendForReview, onApprove, showRejectForm, setShowRejectForm,
+      rejectChapter, setRejectChapter, rejectText, setRejectText, submitReject } = props;
+    const latestEdition = editions.length;
+    let statusNode;
+    if (viewMode === "approved") {
+      const ed = editions[editions.length - 1];
+      statusNode = html`<div className="status-badge status-approved"><span className="status-dot"></span>Approved · Edition ${latestEdition}<span className="status-sub">Effective ${ed ? ed.effectiveDate : "—"}</span></div>`;
+    } else if (viewMode === "historical") {
+      const ed = editions[historicalEdition - 1];
+      statusNode = html`<div className="status-badge status-historical"><span className="status-dot"></span>Historical · Edition ${historicalEdition}<span className="status-sub">Superseded${ed ? " · was effective " + ed.effectiveDate : ""}</span></div>`;
+    } else if (docStatus === "qa_review") {
+      statusNode = html`<div className="status-badge status-review"><span className="status-dot"></span>Awaiting QA review<span className="status-sub">Becomes edition ${latestEdition + 1} on approval</span></div>`;
+    } else {
+      statusNode = html`<div className="status-badge status-draft"><span className="status-dot"></span>Draft<span className="status-sub">Working on edition ${latestEdition + 1}</span></div>`;
+    }
+    return html`<div className="topbar-wrap">
+      <div className="topbar">
+        <div className="topbar-brand"><span className="brand-mark">SMF</span><span className="brand-sub">Adom Pharmaceuticals — Accra Site</span><span className="demo-badge" title="Working prototype of the schema-driven renderer. State lives in memory only and resets on reload; the production build persists everything through the API contract, never localStorage.">Prototype</span></div>
+        ${statusNode}
+        <div className="topbar-right">
+          <div className="view-switch">
+            <button className=${viewMode === "current" ? "vs-btn vs-active" : "vs-btn"} onClick=${() => setViewMode("current")}>Current</button>
+            <button className=${viewMode === "approved" ? "vs-btn vs-active" : "vs-btn"} disabled=${latestEdition === 0} onClick=${() => setViewMode("approved")}>Latest approved</button>
+            <button className=${viewMode === "historical" ? "vs-btn vs-active" : "vs-btn"} disabled=${latestEdition < 2} onClick=${() => { setViewMode("historical"); setHistoricalEdition(Math.max(1, latestEdition - 1)); }}>Historical</button>
+          </div>
+          ${viewMode === "historical" ? html`<select className="ctl ctl-sm" value=${historicalEdition} onChange=${(e) => setHistoricalEdition(Number(e.target.value))}>
+            ${Array.from({ length: latestEdition - 1 }, (_, i) => i + 1).map((n) => html`<option value=${n}>Edition ${n}</option>`)}
+          </select>` : null}
+          <${CompletionRing} percent=${overallPercent} />
+          ${viewMode === "current" && docStatus === "draft" ? html`<button className="btn btn-primary" onClick=${onSendForReview}>Send for QA review</button>` : null}
+          ${viewMode === "current" && docStatus === "qa_review" ? html`<div className="review-actions">
+            <button className="btn btn-primary" onClick=${onApprove}>Approve</button>
+            <button className="btn btn-ghost" onClick=${() => setShowRejectForm(!showRejectForm)}>Reject with comment</button>
+          </div>` : null}
+        </div>
+      </div>
+      ${showRejectForm ? html`<div className="reject-panel">
+        <select className="ctl" value=${rejectChapter} onChange=${(e) => setRejectChapter(Number(e.target.value))}>
+          ${TEMPLATE.chapters.map((c) => html`<option value=${c.number}>Chapter ${c.number} — ${c.title}</option>`)}
+        </select>
+        <textarea className="ctl ctl-textarea" rows="2" placeholder="What needs to change?" value=${rejectText} onChange=${(e) => setRejectText(e.target.value)}></textarea>
+        <button className="btn btn-primary" onClick=${submitReject}>Send rejection</button>
+      </div>` : null}
+    </div>`;
+  }
+
+  const INITIAL_VALUES = {
+    mfgLegalNameAddress: "Adom Pharmaceuticals Ltd. — Plot 14, Spintex Industrial Area, Accra, Ghana",
+    siteBuildingsList: [
+      { buildingName: "Building A — Solid Dosage", streetAddress: "Plot 14A, Spintex Road" },
+      { buildingName: "Building B — Warehouse", streetAddress: "Plot 14B, Spintex Road" },
+    ],
+    emergencyContactName: "Ama Boateng, Head of Quality",
+    emergencyContactPhone: "+233 24 555 0110",
+    siteGeoIdentification: { lat: "5.6395", lng: "-0.1713", dunsNumber: "", otherIdentifier: "" },
+    mfgAuthorityNotIssued: { toggle: false, text: "" },
+    mfgAuthorizationFile: [{ name: "manufacturing-authorization-2024.pdf", size: "482 KB" }],
+    authorizedActivitiesDescription: "Manufacture and packaging of solid oral dosage forms (tablets, capsules) for human use, for domestic distribution and export to ECOWAS member states.",
+    productsManufacturedOnSite: ["Tablets", "Capsules"],
+    hasInspectionHistory: "Yes",
+    gmpInspectionHistory: [{ inspectionDate: "2024-03-12", authority: "Ghana FDA", country: "Ghana", outcome: "Minor findings" }],
+    currentGmpCertificateFile: [{ name: "gmp-certificate-2024.pdf", size: "210 KB" }],
+    nonPharmaActivitiesDescription: "None.",
+    siteSizeBuildingsTable: [{ buildingName: "Building A", sizeSqm: "1200", marketDestination: "Ghana, ECOWAS" }],
+    manufacturingAreaPlanFile: [{ name: "site-plan-buildingA.pdf", size: "1.1 MB" }],
+    productionAreaLayoutsFile: [{ name: "production-layout-r3.pdf", size: "3.4 MB" }],
+    hvacAirSupplyPrinciples: "Single-pass HEPA-filtered air supply to Grade D production areas; unidirectional flow limited to dispensing booths.",
+    hvacTemperatureRange: { min: "20", max: "24" },
+    hvacHumidityRange: { min: "40", max: "60" },
+    hvacPressureDifferentials: "10",
+    hvacAirChangeRate: "20",
+    hvacRecirculationPercent: "70",
+    waterSystemGrade: "Purified water",
+    waterSystemGradeDetails: "Single-pass RO + EDI loop, ambient temperature, continuously recirculated.",
+    waterSystemSchematicFile: [{ name: "water-system-schematic.pdf", size: "640 KB" }],
+    labEquipmentList: [{ equipmentName: "Tablet compression machine", model: "Cadmach CMB4-27", location: "Production Room 2", isCritical: "Yes" }],
+  };
+
+  const EDITION_1_VALUES = {
+    mfgLegalNameAddress: INITIAL_VALUES.mfgLegalNameAddress,
+    siteBuildingsList: INITIAL_VALUES.siteBuildingsList,
+    emergencyContactName: INITIAL_VALUES.emergencyContactName,
+    emergencyContactPhone: INITIAL_VALUES.emergencyContactPhone,
+    siteGeoIdentification: INITIAL_VALUES.siteGeoIdentification,
+    currentGmpCertificateFile: INITIAL_VALUES.currentGmpCertificateFile,
+    nonPharmaActivitiesDescription: INITIAL_VALUES.nonPharmaActivitiesDescription,
+    hasInspectionHistory: "No",
+  };
+
+  const INITIAL_ANNEX_DATES = {
+    "annex-1": "2024-11-01", "annex-2": "2025-01-15", "annex-3": "2024-11-01", "annex-4": "2025-01-15",
+    "annex-5": "2024-09-20", "annex-6": "2025-01-15", "annex-7": "2025-01-15", "annex-8": "2025-01-15",
+  };
+
+  function App() {
+    const [values, setValues] = React.useState(INITIAL_VALUES);
+    const [annexDates, setAnnexDates] = React.useState(INITIAL_ANNEX_DATES);
+    const [jurisdictionFiles, setJurisdictionFiles] = React.useState({});
+    const [activeSection, setActiveSectionState] = React.useState("chapter");
+    const [activeChapter, setActiveChapter] = React.useState(1);
+    const [docStatus, setDocStatus] = React.useState("draft");
+    const [editions, setEditions] = React.useState([{ number: 1, effectiveDate: "2025-01-15", values: EDITION_1_VALUES }]);
+    const [viewMode, setViewMode] = React.useState("current");
+    const [historicalEdition, setHistoricalEdition] = React.useState(1);
+    const [reviewComments, setReviewComments] = React.useState([]);
+    const [savingByChapter, setSavingByChapter] = React.useState({});
+    const [showRejectForm, setShowRejectForm] = React.useState(false);
+    const [rejectChapter, setRejectChapter] = React.useState(1);
+    const [rejectText, setRejectText] = React.useState("");
+    const saveTimers = React.useRef({});
+
+    function selectSection(section, chapterNumber) {
+      setActiveSectionState(section);
+      if (chapterNumber) setActiveChapter(chapterNumber);
+    }
+
+    function onFieldChange(fieldId, val) {
+      setValues((v) => ({ ...v, [fieldId]: val }));
+      setSavingByChapter((s) => ({ ...s, [activeChapter]: { state: "saving" } }));
+      clearTimeout(saveTimers.current[activeChapter]);
+      saveTimers.current[activeChapter] = setTimeout(() => {
+        setSavingByChapter((s) => ({ ...s, [activeChapter]: { state: "saved", time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }) } }));
+      }, 650);
+    }
+
+    function sendForReview() { setDocStatus("qa_review"); }
+    function approve() {
+      const newNumber = editions.length + 1;
+      const today = new Date().toISOString().slice(0, 10);
+      setEditions((e) => [...e, { number: newNumber, effectiveDate: today, values: JSON.parse(JSON.stringify(values)) }]);
+      setDocStatus("draft");
+      setReviewComments([]);
+    }
+    function submitReject() {
+      setReviewComments((c) => [...c, { chapterRef: String(rejectChapter), text: rejectText || "Please review and revise." }]);
+      setDocStatus("draft");
+      setShowRejectForm(false);
+      setRejectText("");
+    }
+
+    const displayValues = viewMode === "current" ? values : viewMode === "approved" ? editions[editions.length - 1].values : editions[historicalEdition - 1].values;
+    const editable = viewMode === "current" && docStatus === "draft";
+    const overallPercent = overallCompletion(displayValues);
+    const chapter = TEMPLATE.chapters.find((c) => c.number === activeChapter);
+    const comment = editable ? reviewComments.find((c) => c.chapterRef === String(activeChapter)) : null;
+
+    return html`<div className="app-shell">
+      <${TopBar} viewMode=${viewMode} setViewMode=${setViewMode} docStatus=${docStatus} editions=${editions}
+        historicalEdition=${historicalEdition} setHistoricalEdition=${setHistoricalEdition}
+        overallPercent=${overallPercent} onSendForReview=${sendForReview} onApprove=${approve}
+        showRejectForm=${showRejectForm} setShowRejectForm=${setShowRejectForm}
+        rejectChapter=${rejectChapter} setRejectChapter=${setRejectChapter}
+        rejectText=${rejectText} setRejectText=${setRejectText} submitReject=${submitReject} />
+      <div className="app-body">
+        <${Sidebar} activeSection=${activeSection} activeChapter=${activeChapter} onSelectSection=${selectSection} values=${displayValues} />
+        <main className="main-panel">
+          ${activeSection === "chapter" ? html`<${ChapterView} chapter=${chapter} values=${displayValues} editable=${editable}
+            savingState=${savingByChapter[activeChapter]} comment=${comment} onFieldChange=${onFieldChange} />` : null}
+          ${activeSection === "annexes" ? html`<${AnnexesView} annexDates=${annexDates} editable=${viewMode === "current"}
+            onDateChange=${(id, d) => setAnnexDates((a) => ({ ...a, [id]: d }))} />` : null}
+          ${activeSection === "jurisdiction" ? html`<${JurisdictionView} files=${jurisdictionFiles} editable=${viewMode === "current"}
+            onFilesChange=${(id, f) => setJurisdictionFiles((j) => ({ ...j, [id]: f }))} />` : null}
+        </main>
+      </div>
+    </div>`;
+  }
+
+  ReactDOM.createRoot(document.getElementById("root")).render(html`<${App} />`);
+</script>

@@ -1,0 +1,602 @@
+/**
+ * SMF-specific additions — kept separate from shell.css (a pure port of
+ * the mockup) so the port stays diffable against source. Everything here
+ * is built from tokens.css; no rule introduces a color the mockup's
+ * discipline doesn't allow (teal = action/active/completion only; amber
+ * and red = classification/problem states only, never decoration).
+ */
+
+/* ---------- document navigation column ---------- */
+/* Sits between the rail and the panel, same --wash the mockup uses for
+   inert fills, same spacing rhythm as the rail (padding/gap), same type
+   scale as .rail-nav — reads as an extension of the rail, not a new idea. */
+.doc-nav {
+  width: 240px;
+  flex: 0 0 auto;
+  background: var(--wash);
+  border-right: 1px solid var(--line);
+  padding: 22px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  overflow-y: auto;
+}
+
+.doc-nav-group-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  padding: 0 10px 6px;
+}
+.doc-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.doc-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: var(--radius-control);
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.doc-nav-item:hover {
+  background: var(--paper);
+}
+.doc-nav-item.active {
+  background: var(--paper);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: 0 0 0 1px var(--line);
+}
+.doc-nav-item .num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  width: 16px;
+  flex: 0 0 auto;
+}
+.doc-nav-item .label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.doc-nav-item .pct {
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-faint);
+  flex: 0 0 auto;
+}
+.doc-nav-item.complete .pct {
+  color: var(--teal);
+  font-weight: 700;
+}
+.doc-nav-item.has-comment .num::after {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--amber);
+  margin-left: 3px;
+  vertical-align: middle;
+}
+
+/* ---------- document status / edition block ---------- */
+/* "The one place to spend visual boldness." Boldness here means size,
+   weight, and permanence of placement — NOT a color outside the
+   discipline. Draft/Historical stay neutral ink; QA Review borrows the
+   same teal-wash/teal treatment as badge-role (informational, not an
+   action); Approved is the one state that earns solid teal fill, since
+   --teal is documented as "completion." */
+.doc-status {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  padding: 14px 14px 12px;
+  margin-bottom: 4px;
+  background: var(--paper);
+}
+.doc-status .edition-num {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+}
+.doc-status .edition-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+.doc-status .status-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.doc-status .status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.doc-status.status-draft .status-line,
+.doc-status.status-historical .status-line {
+  color: var(--ink-soft);
+}
+.doc-status.status-review {
+  background: var(--teal-wash);
+  border-color: transparent;
+}
+.doc-status.status-review .status-line,
+.doc-status.status-review .edition-num,
+.doc-status.status-review .edition-label {
+  color: var(--teal);
+}
+.doc-status.status-approved {
+  background: var(--teal);
+  border-color: transparent;
+}
+.doc-status.status-approved .status-line,
+.doc-status.status-approved .edition-num,
+.doc-status.status-approved .edition-label {
+  color: var(--paper);
+}
+.doc-status .sub {
+  font-size: 11px;
+  color: inherit;
+  opacity: 0.85;
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+.doc-status .rejected-flag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 6px 8px;
+  background: var(--amber-wash);
+  color: var(--amber);
+  border-radius: var(--radius-control);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.doc-view-switch {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 2px;
+}
+.doc-view-switch button {
+  font-family: inherit;
+  font-size: 12px;
+  text-align: left;
+  padding: 6px 10px;
+  border-radius: var(--radius-control);
+  border: none;
+  background: none;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.doc-view-switch button:disabled {
+  color: var(--ink-faint);
+  cursor: not-allowed;
+}
+.doc-view-switch button.active {
+  background: var(--wash);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- read-only field presentation ---------- */
+/* Values as text, not disabled inputs — same label hierarchy and grid so
+   layout doesn't shift between draft and read-only. */
+.field-value {
+  font-size: 13.5px;
+  color: var(--ink);
+  line-height: 1.55;
+  white-space: pre-wrap;
+  padding: 2px 0;
+}
+.field-value.empty {
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+/* ---------- multiSelect (reuses .pill-group / .pill visual language) --- */
+.chip-multi {
+  border-color: var(--line);
+}
+.chip-multi[aria-pressed="true"] {
+  background: var(--teal-wash);
+  border-color: var(--teal);
+  color: var(--teal);
+  font-weight: 600;
+}
+
+/* ---------- structured numeric ---------- */
+.numeric-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.numeric-row input {
+  width: 100px;
+}
+.numeric-row .unit {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.numeric-row .sep {
+  color: var(--ink-faint);
+}
+
+/* ---------- repeatable table ---------- */
+.rt-wrap {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  overflow-x: auto;
+}
+table.rt {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.8px;
+}
+table.rt th {
+  text-align: left;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  font-weight: 600;
+  padding: 8px 10px;
+  background: var(--wash);
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+table.rt td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--line);
+}
+table.rt tr:last-child td {
+  border-bottom: none;
+}
+table.rt input,
+table.rt select {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  padding: 5px 7px;
+  font-size: 12.5px;
+  font-family: inherit;
+  width: 100%;
+}
+.rt-remove {
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px;
+}
+.rt-remove:hover {
+  color: var(--red);
+}
+.rt-add {
+  display: block;
+  width: 100%;
+  background: var(--wash);
+  border: none;
+  border-top: 1px solid var(--line);
+  color: var(--teal);
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 8px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ---------- file chips (extends upload-box) ---------- */
+.file-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+.file-chip {
+  background: var(--wash);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  padding: 5px 9px;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.file-chip .size {
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.file-chip button {
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0;
+}
+
+/* ---------- toggle + text ---------- */
+.switch-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--ink);
+  margin-bottom: 9px;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+.switch input {
+  position: absolute;
+  opacity: 0;
+  width: 34px;
+  height: 20px;
+  margin: 0;
+  cursor: pointer;
+}
+.switch-track {
+  display: block;
+  width: 34px;
+  height: 20px;
+  background: var(--line);
+  border-radius: 100px;
+  position: relative;
+}
+.switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: var(--paper);
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(19, 42, 61, 0.25);
+}
+.switch[data-on="true"] .switch-track {
+  background: var(--teal);
+}
+.switch[data-on="true"] .switch-thumb {
+  transform: translateX(14px);
+}
+
+/* ---------- map picker (placeholder, see DECISIONS.md) ---------- */
+.map-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--wash);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  padding: 9px 12px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  margin-bottom: 9px;
+}
+
+/* ---------- comment banner (rejection, clause-level) ---------- */
+.comment-banner {
+  background: var(--amber-wash);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  padding: 11px 14px;
+  margin: 0 22px 0;
+  margin-top: 16px;
+}
+.comment-banner strong {
+  color: var(--amber);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.comment-banner p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.subclause-block {
+  padding-left: 14px;
+  border-left: 2px solid var(--line);
+  margin-bottom: 6px;
+  position: relative;
+}
+/* ---------- jurisdiction appendix cards ---------- */
+.appendix-card {
+  border: 1px dashed var(--amber);
+  background: var(--amber-wash);
+  border-radius: var(--radius-panel);
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.appendix-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.appendix-card-head h4 {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.appendix-card .hint {
+  display: block;
+  margin: 4px 0;
+}
+
+/* ---------- conflict resolution (409) ---------- */
+.conflict-banner {
+  margin: 16px 22px 0;
+  border: 1px solid var(--amber);
+  background: var(--amber-wash);
+  border-radius: var(--radius-panel);
+  padding: 14px 18px;
+}
+.conflict-head strong {
+  display: block;
+  font-size: 13.5px;
+  color: var(--amber);
+  margin-bottom: 3px;
+}
+.conflict-head p {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin: 0 0 10px;
+}
+.conflict-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.conflict-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  padding: 6px 10px;
+  font-size: 12.5px;
+}
+.conflict-row-clash {
+  border-color: var(--red);
+}
+.conflict-tag {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--wash);
+  padding: 2px 8px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+.conflict-tag-clash {
+  color: var(--red);
+  background: var(--red-wash);
+}
+.conflict-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.reject-bar {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 14px 28px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.reject-bar select {
+  max-width: 260px;
+}
+.reject-bar textarea {
+  flex: 1;
+  min-width: 240px;
+  min-height: 40px;
+}
+
+/* ---------- export preview ---------- */
+.export-preview-shell {
+  flex: 1;
+  min-width: 0;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.export-loading {
+  padding: 40px;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+.export-toolbar {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.export-toolbar strong {
+  font-size: 13.5px;
+}
+.export-advisory {
+  margin: 14px 20px 0;
+  background: var(--amber-wash);
+  color: var(--amber);
+  border-radius: var(--radius-control);
+  padding: 10px 14px;
+  font-size: 12.5px;
+}
+.export-advisory strong {
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 11px;
+}
+.export-page-area {
+  flex: 1;
+  overflow: auto;
+  background: var(--wash);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+/* Paged.js renders each page as a .pagedjs_page with its own fixed A4
+   dimensions via print.css's @page rule; we only add the on-screen
+   framing (shadow, gap between sheets) here. */
+.export-page-area .pagedjs_page {
+  background: var(--paper);
+  box-shadow: 0 1px 3px rgba(19, 42, 61, 0.15), 0 8px 24px -12px rgba(19, 42, 61, 0.25);
+}
+
+.subclause-ref-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--teal);
+  background: var(--teal-wash);
+  padding: 2px 6px;
+  border-radius: 5px;
+  margin-right: 8px;
+}

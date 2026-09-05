@@ -1,0 +1,1453 @@
+{
+  "schemaVersion": "1.0.0",
+  "documentStandard": {
+    "name": "WHO TRS 961 (2011) Annex 14",
+    "citation": "WHO Technical Report Series No. 961, 2011, Annex 14 — WHO Guidelines for Drafting a Site Master File",
+    "ursReference": "SMF_Frontend_URS_Phase1.docx, Section 4"
+  },
+  "inputTypes": [
+    "text",
+    "phone",
+    "richText",
+    "dropdown",
+    "multiSelect",
+    "structuredNumeric",
+    "repeatableTable",
+    "fileUpload",
+    "toggleWithText",
+    "mapPicker"
+  ],
+  "chapters": [
+    {
+      "id": "ch1",
+      "number": 1,
+      "title": "General Information on the Manufacturer",
+      "whoCitation": "TRS 961 Annex 14 §1",
+      "subClauses": [
+        {
+          "ref": "1.1",
+          "title": "Basic site information and contacts",
+          "whoCitation": "TRS 961 Annex 14 §1.1",
+          "fields": [
+            {
+              "id": "mfgLegalNameAddress",
+              "ref": "1.1",
+              "label": "Manufacturer legal name and official address",
+              "inputType": "text",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "Full legal entity name as licensed, and the registered official address.",
+              "whoCitation": "TRS 961 Annex 14 §1.1"
+            },
+            {
+              "id": "siteBuildingsList",
+              "ref": "1.1",
+              "label": "Site name(s), building name(s), street addresses of production units on site",
+              "inputType": "repeatableTable",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "Add one row per building or production unit on the site.",
+              "whoCitation": "TRS 961 Annex 14 §1.1",
+              "columns": [
+                { "id": "buildingName", "label": "Building / unit name", "inputType": "text", "required": true },
+                { "id": "streetAddress", "label": "Street address", "inputType": "text", "required": true }
+              ],
+              "minRows": 1
+            },
+            {
+              "id": "emergencyContactName",
+              "ref": "1.1",
+              "label": "24-hour emergency contact — name",
+              "inputType": "text",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "Person or role reachable 24 hours a day for product defects or recalls.",
+              "whoCitation": "TRS 961 Annex 14 §1.1"
+            },
+            {
+              "id": "emergencyContactPhone",
+              "ref": "1.1",
+              "label": "24-hour emergency contact — phone",
+              "inputType": "phone",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "Include country code. This number must be staffed or forwarded 24 hours a day.",
+              "whoCitation": "TRS 961 Annex 14 §1.1"
+            },
+            {
+              "id": "siteGeoIdentification",
+              "ref": "1.1",
+              "label": "Site identification (GPS coordinates, D-U-N-S number, or other geolocation reference)",
+              "inputType": "mapPicker",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "Pick the site location on the map, or enter a D-U-N-S number or other identifier if the site cannot be located on a map. At least one identifier is required.",
+              "whoCitation": "TRS 961 Annex 14 §1.1",
+              "identifierTypes": ["gps", "duns", "other"],
+              "validation": { "atLeastOneOf": ["gps", "duns", "other"] }
+            }
+          ]
+        },
+        {
+          "ref": "1.2",
+          "title": "Manufacturing authorization, licensed activities, and inspection history",
+          "whoCitation": "TRS 961 Annex 14 §1.2",
+          "fields": [
+            {
+              "id": "mfgAuthorityNotIssued",
+              "ref": "1.2",
+              "label": "Licensing authority does not issue a manufacturing authorization document",
+              "inputType": "toggleWithText",
+              "required": false,
+              "condition": null,
+              "annexLink": "annex-1",
+              "helpText": "Toggle on only if your licensing authority does not issue a formal manufacturing authorization document, and explain what is issued instead.",
+              "whoCitation": "TRS 961 Annex 14 §1.2",
+              "toggleLabel": "Our licensing authority does not issue this document",
+              "textLabel": "Explain what is issued instead",
+              "textRequiredWhenToggleOn": true
+            },
+            {
+              "id": "mfgAuthorizationFile",
+              "ref": "1.2",
+              "label": "Manufacturing authorization document",
+              "inputType": "fileUpload",
+              "required": false,
+              "condition": { "fieldId": "mfgAuthorityNotIssued", "operator": "equals", "value": false, "field": "toggle" },
+              "annexLink": "annex-1",
+              "helpText": "Upload a copy of the current manufacturing authorization. Not required if the toggle above is on.",
+              "whoCitation": "TRS 961 Annex 14 §1.2",
+              "accept": ["application/pdf"],
+              "maxFiles": 1
+            },
+            {
+              "id": "authorizedActivitiesDescription",
+              "ref": "1.2",
+              "label": "Description of authorized activities (manufacture / import / export / distribution), including foreign authorizations by dosage form",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §1.2"
+            },
+            {
+              "id": "productsManufacturedOnSite",
+              "ref": "1.2",
+              "label": "Type of products currently manufactured on-site",
+              "inputType": "multiSelect",
+              "required": true,
+              "condition": null,
+              "annexLink": "annex-2",
+              "helpText": "Selected from the dosage form list maintained in Annex 2.",
+              "whoCitation": "TRS 961 Annex 14 §1.2",
+              "optionsSource": "annex-2.dosageFormsList.dosageForm"
+            },
+            {
+              "id": "hasInspectionHistory",
+              "ref": "1.2",
+              "label": "Has this site had a GMP inspection by a regulatory authority in the last 5 years?",
+              "inputType": "dropdown",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "This determines whether the inspection history table below is required.",
+              "whoCitation": "TRS 961 Annex 14 §1.2",
+              "options": ["Yes", "No"],
+              "derivedGatingField": true,
+              "note": "Not a literal URS row; added as an explicit gate so the conditional row below ('Required if inspections occurred') has a testable condition and a correct completion-percentage denominator."
+            },
+            {
+              "id": "gmpInspectionHistory",
+              "ref": "1.2",
+              "label": "GMP inspection history (last 5 years): date, authority, country, outcome",
+              "inputType": "repeatableTable",
+              "required": false,
+              "condition": { "fieldId": "hasInspectionHistory", "operator": "equals", "value": "Yes" },
+              "annexLink": null,
+              "helpText": "Required if inspections occurred.",
+              "whoCitation": "TRS 961 Annex 14 §1.2",
+              "columns": [
+                { "id": "inspectionDate", "label": "Date", "inputType": "text", "required": true },
+                { "id": "authority", "label": "Authority", "inputType": "text", "required": true },
+                { "id": "country", "label": "Country", "inputType": "text", "required": true },
+                { "id": "outcome", "label": "Outcome", "inputType": "dropdown", "required": true, "options": ["No action", "Minor findings", "Major findings", "Critical findings", "Certificate withheld/withdrawn"] }
+              ],
+              "minRows": 1
+            },
+            {
+              "id": "currentGmpCertificateFile",
+              "ref": "1.2",
+              "label": "Current GMP certificate",
+              "inputType": "fileUpload",
+              "required": true,
+              "condition": null,
+              "annexLink": "annex-3",
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §1.2",
+              "accept": ["application/pdf"],
+              "maxFiles": 1
+            }
+          ]
+        },
+        {
+          "ref": "1.3",
+          "title": "Non-pharmaceutical activities",
+          "whoCitation": "TRS 961 Annex 14 §1.3",
+          "fields": [
+            {
+              "id": "nonPharmaActivitiesDescription",
+              "ref": "1.3",
+              "label": "Description of non-pharmaceutical activities on site, if any",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "State 'None' if not applicable.",
+              "whoCitation": "TRS 961 Annex 14 §1.3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch2",
+      "number": 2,
+      "title": "Quality Management",
+      "whoCitation": "TRS 961 Annex 14 §2",
+      "subClauses": [
+        {
+          "ref": "2.1",
+          "title": "Quality management system",
+          "whoCitation": "TRS 961 Annex 14 §2.1",
+          "fields": [
+            {
+              "id": "qmsDescriptionStandards",
+              "ref": "2.1",
+              "label": "QMS description and standards referenced (e.g. WHO GMP, ISO)",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §2.1"
+            },
+            {
+              "id": "qualityResponsibilities",
+              "ref": "2.1",
+              "label": "Responsibilities for maintaining the quality system, including senior management",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §2.1"
+            },
+            {
+              "id": "hasAccreditations",
+              "ref": "2.1",
+              "label": "Does this site hold any accreditation or certification (other than the GMP certificate above)?",
+              "inputType": "dropdown",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §2.1",
+              "options": ["Yes", "No"],
+              "derivedGatingField": true,
+              "note": "Added as an explicit gate; URS marks the row below 'Optional if none held'."
+            },
+            {
+              "id": "accreditationActivities",
+              "ref": "2.1",
+              "label": "Accreditation/certification activities: scope, dates, accrediting body",
+              "inputType": "repeatableTable",
+              "required": false,
+              "condition": { "fieldId": "hasAccreditations", "operator": "equals", "value": "Yes" },
+              "annexLink": null,
+              "helpText": "Optional if none held.",
+              "whoCitation": "TRS 961 Annex 14 §2.1",
+              "columns": [
+                { "id": "scope", "label": "Scope", "inputType": "text", "required": true },
+                { "id": "date", "label": "Date", "inputType": "text", "required": true },
+                { "id": "accreditingBody", "label": "Accrediting body", "inputType": "text", "required": true }
+              ]
+            }
+          ]
+        },
+        {
+          "ref": "2.2",
+          "title": "Authorized/Qualified Persons and batch release",
+          "whoCitation": "TRS 961 Annex 14 §2.2",
+          "fields": [
+            {
+              "id": "aqpQualifications",
+              "ref": "2.2",
+              "label": "Qualification (education/experience) of Authorized/Qualified Person(s)",
+              "inputType": "repeatableTable",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "Linked to Personnel records where available.",
+              "whoCitation": "TRS 961 Annex 14 §2.2",
+              "columns": [
+                { "id": "name", "label": "Name", "inputType": "text", "required": true },
+                { "id": "education", "label": "Education", "inputType": "text", "required": true },
+                { "id": "experience", "label": "Relevant experience", "inputType": "text", "required": true }
+              ],
+              "minRows": 1
+            },
+            {
+              "id": "batchCertificationProcedure",
+              "ref": "2.2",
+              "label": "Batch certification and release procedure description",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §2.2"
+            },
+            {
+              "id": "authorizedPersonRole",
+              "ref": "2.2",
+              "label": "Role of Authorized Person in quarantine/release and marketing-authorization compliance",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §2.2"
+            },
+            {
+              "id": "hasMultipleAuthorizedPersons",
+              "ref": "2.2",
+              "label": "Does this site have more than one Authorized/Qualified Person?",
+              "inputType": "dropdown",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §2.2",
+              "options": ["Yes", "No"],
+              "derivedGatingField": true,
+              "note": "Added as an explicit gate for the conditional row below."
+            },
+            {
+              "id": "multipleAPArrangements",
+              "ref": "2.2",
+              "label": "Arrangements between multiple Authorized Persons",
+              "inputType": "richText",
+              "required": false,
+              "condition": { "fieldId": "hasMultipleAuthorizedPersons", "operator": "equals", "value": "Yes" },
+              "annexLink": null,
+              "helpText": "Conditional — only if applicable.",
+              "whoCitation": "TRS 961 Annex 14 §2.2"
+            },
+            {
+              "id": "patStatement",
+              "ref": "2.2",
+              "label": "Statement on PAT / real-time release / parametric release use",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "State 'Not applicable' if none.",
+              "whoCitation": "TRS 961 Annex 14 §2.2"
+            }
+          ]
+        },
+        {
+          "ref": "2.3",
+          "title": "Supply chain, contractors, and materials integrity",
+          "whoCitation": "TRS 961 Annex 14 §2.3",
+          "fields": [
+            {
+              "id": "supplyChainAuditProgramme",
+              "ref": "2.3",
+              "label": "Supply chain knowledge and external audit programme summary",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §2.3"
+            },
+            {
+              "id": "contractorQualificationSystem",
+              "ref": "2.3",
+              "label": "Qualification system for contractors, API manufacturers, critical material suppliers",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §2.3"
+            },
+            {
+              "id": "tseCompliance",
+              "ref": "2.3",
+              "label": "TSE compliance measures",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "State 'Not applicable' if none.",
+              "whoCitation": "TRS 961 Annex 14 §2.3"
+            },
+            {
+              "id": "counterfeitMeasures",
+              "ref": "2.3",
+              "label": "Measures for suspected/identified counterfeit or substandard materials/products",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §2.3"
+            },
+            {
+              "id": "externalTechnicalAssistance",
+              "ref": "2.3",
+              "label": "Use of external scientific/analytical/technical assistance",
+              "inputType": "richText",
+              "required": false,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "Optional.",
+              "whoCitation": "TRS 961 Annex 14 §2.3"
+            },
+            {
+              "id": "hasContractManufacturers",
+              "ref": "2.3",
+              "label": "Does this site use contract manufacturers or contract laboratories?",
+              "inputType": "dropdown",
+              "required": true,
+              "condition": null,
+              "annexLink": "annex-4",
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §2.3",
+              "options": ["Yes", "No"],
+              "derivedGatingField": true,
+              "note": "Added as an explicit gate; URS states the responsibility-sharing row below is 'Required if contracts exist'."
+            },
+            {
+              "id": "contractManufacturersList",
+              "ref": "2.3",
+              "label": "Contract manufacturers/labs: name, address, contact",
+              "inputType": "repeatableTable",
+              "required": false,
+              "condition": { "fieldId": "hasContractManufacturers", "operator": "equals", "value": "Yes" },
+              "annexLink": "annex-4",
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §2.3",
+              "columns": [
+                { "id": "name", "label": "Name", "inputType": "text", "required": true },
+                { "id": "address", "label": "Address", "inputType": "text", "required": true },
+                { "id": "contact", "label": "Contact", "inputType": "text", "required": true }
+              ]
+            },
+            {
+              "id": "supplyChainFlowchartFile",
+              "ref": "2.3",
+              "label": "Supply-chain flowchart",
+              "inputType": "fileUpload",
+              "required": false,
+              "condition": { "fieldId": "hasContractManufacturers", "operator": "equals", "value": "Yes" },
+              "annexLink": "annex-4",
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §2.3",
+              "accept": ["application/pdf", "image/png", "image/jpeg"],
+              "maxFiles": 5
+            },
+            {
+              "id": "responsibilitySharingOverview",
+              "ref": "2.3",
+              "label": "Responsibility-sharing overview: contract giver vs. acceptor",
+              "inputType": "richText",
+              "required": false,
+              "condition": { "fieldId": "hasContractManufacturers", "operator": "equals", "value": "Yes" },
+              "annexLink": null,
+              "helpText": "Required if contracts exist.",
+              "whoCitation": "TRS 961 Annex 14 §2.3"
+            }
+          ]
+        },
+        {
+          "ref": "2.4",
+          "title": "Quality risk management",
+          "whoCitation": "TRS 961 Annex 14 §2.4",
+          "fields": [
+            {
+              "id": "qrmMethodology",
+              "ref": "2.4",
+              "label": "Quality risk management (QRM) methodology used",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §2.4"
+            },
+            {
+              "id": "qrmScope",
+              "ref": "2.4",
+              "label": "Scope/focus of QRM (corporate vs. site level), including supply-continuity assessment",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §2.4"
+            }
+          ]
+        },
+        {
+          "ref": "2.5",
+          "title": "Product quality review",
+          "whoCitation": "TRS 961 Annex 14 §2.5",
+          "fields": [
+            {
+              "id": "pqrMethodology",
+              "ref": "2.5",
+              "label": "Product Quality Review (PQR/APQR) methodology summary",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §2.5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch3",
+      "number": 3,
+      "title": "Personnel",
+      "whoCitation": "TRS 961 Annex 14 §3",
+      "subClauses": [
+        {
+          "ref": "3",
+          "title": "Organization and headcount",
+          "whoCitation": "TRS 961 Annex 14 §3",
+          "fields": [
+            {
+              "id": "organizationChartFile",
+              "ref": "3",
+              "label": "Organization chart: quality management, production, and QC positions including senior management and Authorized Person(s)",
+              "inputType": "fileUpload",
+              "required": true,
+              "condition": null,
+              "annexLink": "annex-5",
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §3",
+              "accept": ["application/pdf", "image/png", "image/jpeg"],
+              "maxFiles": 3
+            },
+            {
+              "id": "headcountQualityManagement",
+              "ref": "3",
+              "label": "Employee headcount — Quality Management",
+              "inputType": "structuredNumeric",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §3",
+              "unit": "employees",
+              "min": 0
+            },
+            {
+              "id": "headcountProduction",
+              "ref": "3",
+              "label": "Employee headcount — Production",
+              "inputType": "structuredNumeric",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §3",
+              "unit": "employees",
+              "min": 0
+            },
+            {
+              "id": "headcountQualityControl",
+              "ref": "3",
+              "label": "Employee headcount — Quality Control",
+              "inputType": "structuredNumeric",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §3",
+              "unit": "employees",
+              "min": 0
+            },
+            {
+              "id": "headcountStorageDistribution",
+              "ref": "3",
+              "label": "Employee headcount — Storage & Distribution",
+              "inputType": "structuredNumeric",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §3",
+              "unit": "employees",
+              "min": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch4",
+      "number": 4,
+      "title": "Premises and Equipment",
+      "whoCitation": "TRS 961 Annex 14 §4",
+      "subClauses": [
+        {
+          "ref": "4.1",
+          "title": "Site, buildings, and layouts",
+          "whoCitation": "TRS 961 Annex 14 §4.1",
+          "fields": [
+            {
+              "id": "siteSizeBuildingsTable",
+              "ref": "4.1",
+              "label": "Site size and list of buildings; market destination per building if multi-market production",
+              "inputType": "repeatableTable",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §4.1",
+              "columns": [
+                { "id": "buildingName", "label": "Building", "inputType": "text", "required": true },
+                { "id": "sizeSqm", "label": "Size (m²)", "inputType": "structuredNumeric", "required": true },
+                { "id": "marketDestination", "label": "Market destination", "inputType": "text", "required": false }
+              ],
+              "minRows": 1
+            },
+            {
+              "id": "manufacturingAreaPlanFile",
+              "ref": "4.1",
+              "label": "Manufacturing area plan/description with scale (simple plan, not full engineering drawing)",
+              "inputType": "fileUpload",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §4.1",
+              "accept": ["application/pdf", "image/png", "image/jpeg"],
+              "maxFiles": 5
+            },
+            {
+              "id": "productionAreaLayoutsFile",
+              "ref": "4.1",
+              "label": "Production area layouts: room classification, pressure differentials, activity per room",
+              "inputType": "fileUpload",
+              "required": true,
+              "condition": null,
+              "annexLink": "annex-6",
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §4.1",
+              "accept": ["application/pdf", "image/png", "image/jpeg"],
+              "maxFiles": 10
+            },
+            {
+              "id": "warehouseStorageLayoutsFile",
+              "ref": "4.1",
+              "label": "Warehouse/storage layouts, including special areas for toxic/hazardous/sensitizing materials",
+              "inputType": "fileUpload",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §4.1",
+              "accept": ["application/pdf", "image/png", "image/jpeg"],
+              "maxFiles": 10
+            },
+            {
+              "id": "specificStorageConditionsNotes",
+              "ref": "4.1",
+              "label": "Specific storage conditions not shown on layouts",
+              "inputType": "richText",
+              "required": false,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "Optional.",
+              "whoCitation": "TRS 961 Annex 14 §4.1"
+            }
+          ]
+        },
+        {
+          "ref": "4.1.1",
+          "title": "HVAC",
+          "whoCitation": "TRS 961 Annex 14 §4.1.1",
+          "fields": [
+            {
+              "id": "hvacAirSupplyPrinciples",
+              "ref": "4.1.1",
+              "label": "HVAC air supply principles",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §4.1.1"
+            },
+            {
+              "id": "hvacTemperatureRange",
+              "ref": "4.1.1",
+              "label": "Temperature range",
+              "inputType": "structuredNumeric",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §4.1.1",
+              "unit": "°C",
+              "range": true
+            },
+            {
+              "id": "hvacHumidityRange",
+              "ref": "4.1.1",
+              "label": "Relative humidity range",
+              "inputType": "structuredNumeric",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §4.1.1",
+              "unit": "%RH",
+              "range": true,
+              "min": 0,
+              "max": 100
+            },
+            {
+              "id": "hvacPressureDifferentials",
+              "ref": "4.1.1",
+              "label": "Pressure differentials between areas",
+              "inputType": "structuredNumeric",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §4.1.1",
+              "unit": "Pa"
+            },
+            {
+              "id": "hvacAirChangeRate",
+              "ref": "4.1.1",
+              "label": "Air-change rate",
+              "inputType": "structuredNumeric",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §4.1.1",
+              "unit": "changes/hour",
+              "min": 0
+            },
+            {
+              "id": "hvacRecirculationPercent",
+              "ref": "4.1.1",
+              "label": "Air recirculation percentage",
+              "inputType": "structuredNumeric",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §4.1.1",
+              "unit": "%",
+              "min": 0,
+              "max": 100
+            }
+          ]
+        },
+        {
+          "ref": "4.1.2",
+          "title": "Water systems",
+          "whoCitation": "TRS 961 Annex 14 §4.1.2",
+          "fields": [
+            {
+              "id": "waterSystemGrade",
+              "ref": "4.1.2",
+              "label": "Water system quality grade produced",
+              "inputType": "dropdown",
+              "required": true,
+              "condition": null,
+              "annexLink": "annex-7",
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §4.1.2",
+              "options": ["Potable water", "Purified water", "Highly purified water", "Water for injection (WFI)", "Other"]
+            },
+            {
+              "id": "waterSystemGradeDetails",
+              "ref": "4.1.2",
+              "label": "Water system details",
+              "inputType": "text",
+              "required": false,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "Additional detail on the water system (e.g. loop configuration, generation method). Required if 'Other' is selected above.",
+              "whoCitation": "TRS 961 Annex 14 §4.1.2"
+            },
+            {
+              "id": "waterSystemSchematicFile",
+              "ref": "4.1.2",
+              "label": "Schematic drawing of water system",
+              "inputType": "fileUpload",
+              "required": true,
+              "condition": null,
+              "annexLink": "annex-7",
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §4.1.2",
+              "accept": ["application/pdf", "image/png", "image/jpeg"],
+              "maxFiles": 5
+            }
+          ]
+        },
+        {
+          "ref": "4.1.3",
+          "title": "Other utilities",
+          "whoCitation": "TRS 961 Annex 14 §4.1.3",
+          "fields": [
+            {
+              "id": "otherUtilitiesDescription",
+              "ref": "4.1.3",
+              "label": "Other utilities description (steam, compressed air, nitrogen, etc.)",
+              "inputType": "richText",
+              "required": false,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "Optional.",
+              "whoCitation": "TRS 961 Annex 14 §4.1.3"
+            }
+          ]
+        },
+        {
+          "ref": "4.2.1",
+          "title": "Equipment",
+          "whoCitation": "TRS 961 Annex 14 §4.2.1",
+          "fields": [
+            {
+              "id": "labEquipmentList",
+              "ref": "4.2.1",
+              "label": "Major production/control laboratory equipment list, critical items flagged",
+              "inputType": "repeatableTable",
+              "required": true,
+              "condition": null,
+              "annexLink": "annex-8",
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §4.2.1",
+              "columns": [
+                { "id": "equipmentName", "label": "Equipment", "inputType": "text", "required": true },
+                { "id": "model", "label": "Model", "inputType": "text", "required": false },
+                { "id": "location", "label": "Location", "inputType": "text", "required": true },
+                { "id": "isCritical", "label": "Critical item", "inputType": "dropdown", "required": true, "options": ["Yes", "No"] }
+              ],
+              "minRows": 1
+            }
+          ]
+        },
+        {
+          "ref": "4.2.2",
+          "title": "Cleaning and sanitation",
+          "whoCitation": "TRS 961 Annex 14 §4.2.2",
+          "fields": [
+            {
+              "id": "cleaningSanitationMethods",
+              "ref": "4.2.2",
+              "label": "Cleaning and sanitation methods for product-contact surfaces (manual, CIP, automatic)",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §4.2.2"
+            }
+          ]
+        },
+        {
+          "ref": "4.2.3",
+          "title": "GMP-critical computerized systems",
+          "whoCitation": "TRS 961 Annex 14 §4.2.3",
+          "fields": [
+            {
+              "id": "computerizedSystemsList",
+              "ref": "4.2.3",
+              "label": "Description of GMP-critical computerized systems (excluding equipment-specific PLCs)",
+              "inputType": "repeatableTable",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §4.2.3",
+              "columns": [
+                { "id": "systemName", "label": "System", "inputType": "text", "required": true },
+                { "id": "purpose", "label": "Purpose", "inputType": "text", "required": true },
+                { "id": "gmpCriticality", "label": "GMP criticality", "inputType": "text", "required": true }
+              ],
+              "minRows": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch5",
+      "number": 5,
+      "title": "Documentation",
+      "whoCitation": "TRS 961 Annex 14 §5",
+      "subClauses": [
+        {
+          "ref": "5",
+          "title": "Documentation system",
+          "whoCitation": "TRS 961 Annex 14 §5",
+          "fields": [
+            {
+              "id": "documentationSystemType",
+              "ref": "5",
+              "label": "Documentation system type",
+              "inputType": "dropdown",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §5",
+              "options": ["Electronic", "Manual", "Hybrid"]
+            },
+            {
+              "id": "usesOffsiteArchive",
+              "ref": "5",
+              "label": "Is any documentation archived off-site?",
+              "inputType": "dropdown",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §5",
+              "options": ["Yes", "No"],
+              "derivedGatingField": true,
+              "note": "Added as an explicit gate; URS marks the off-site archive fields below 'Conditional — only if off-site storage used'."
+            },
+            {
+              "id": "offsiteArchiveDocumentTypes",
+              "ref": "5",
+              "label": "Off-site archive — document types stored",
+              "inputType": "text",
+              "required": false,
+              "condition": { "fieldId": "usesOffsiteArchive", "operator": "equals", "value": "Yes" },
+              "annexLink": null,
+              "helpText": "Include pharmacovigilance data if applicable.",
+              "whoCitation": "TRS 961 Annex 14 §5"
+            },
+            {
+              "id": "offsiteArchiveLocation",
+              "ref": "5",
+              "label": "Off-site archive — storage site name and address",
+              "inputType": "text",
+              "required": false,
+              "condition": { "fieldId": "usesOffsiteArchive", "operator": "equals", "value": "Yes" },
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §5"
+            },
+            {
+              "id": "offsiteArchiveRetrievalTime",
+              "ref": "5",
+              "label": "Off-site archive — estimated retrieval time",
+              "inputType": "structuredNumeric",
+              "required": false,
+              "condition": { "fieldId": "usesOffsiteArchive", "operator": "equals", "value": "Yes" },
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §5",
+              "unit": "hours",
+              "min": 0
+            },
+            {
+              "id": "offsiteArchiveIncludesPharmacovigilance",
+              "ref": "5",
+              "label": "Off-site archive — includes pharmacovigilance data?",
+              "inputType": "dropdown",
+              "required": false,
+              "condition": { "fieldId": "usesOffsiteArchive", "operator": "equals", "value": "Yes" },
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §5",
+              "options": ["Yes", "No"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch6",
+      "number": 6,
+      "title": "Production",
+      "whoCitation": "TRS 961 Annex 14 §6",
+      "subClauses": [
+        {
+          "ref": "6.1",
+          "title": "Products and processes",
+          "whoCitation": "TRS 961 Annex 14 §6.1",
+          "fields": [
+            {
+              "id": "dosageFormsManufactured",
+              "ref": "6.1",
+              "label": "Dosage forms manufactured (human and veterinary)",
+              "inputType": "multiSelect",
+              "required": true,
+              "condition": null,
+              "annexLink": "annex-2",
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §6.1",
+              "optionsSource": "annex-2.dosageFormsList.dosageForm"
+            },
+            {
+              "id": "manufacturesIMPs",
+              "ref": "6.1",
+              "label": "Does this site manufacture Investigational Medicinal Products (IMPs) for clinical trials?",
+              "inputType": "dropdown",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §6.1",
+              "options": ["Yes", "No"],
+              "derivedGatingField": true,
+              "note": "Added as an explicit gate for the conditional row below."
+            },
+            {
+              "id": "impDosageFormsDifferences",
+              "ref": "6.1",
+              "label": "IMP dosage forms for clinical trials, including differences in areas/personnel from commercial production",
+              "inputType": "richText",
+              "required": false,
+              "condition": { "fieldId": "manufacturesIMPs", "operator": "equals", "value": "Yes" },
+              "annexLink": null,
+              "helpText": "Conditional — only if IMPs manufactured.",
+              "whoCitation": "TRS 961 Annex 14 §6.1"
+            },
+            {
+              "id": "toxicHazardousSubstances",
+              "ref": "6.1",
+              "label": "Toxic or hazardous substances handled (high pharmacological activity / sensitizing properties)",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "State 'None' if not applicable.",
+              "whoCitation": "TRS 961 Annex 14 §6.1"
+            },
+            {
+              "id": "dedicatedOrCampaignBasis",
+              "ref": "6.1",
+              "label": "Products manufactured in dedicated facility or on a campaign basis",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §6.1"
+            },
+            {
+              "id": "patApplicationStatement",
+              "ref": "6.1",
+              "label": "PAT application statement and associated computerized systems",
+              "inputType": "richText",
+              "required": false,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "Optional.",
+              "whoCitation": "TRS 961 Annex 14 §6.1"
+            }
+          ]
+        },
+        {
+          "ref": "6.2",
+          "title": "Validation and reprocessing policy",
+          "whoCitation": "TRS 961 Annex 14 §6.2",
+          "fields": [
+            {
+              "id": "processValidationPolicy",
+              "ref": "6.2",
+              "label": "General policy for process validation",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §6.2"
+            },
+            {
+              "id": "reprocessingReworkPolicy",
+              "ref": "6.2",
+              "label": "Policy for reprocessing or reworking",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §6.2"
+            }
+          ]
+        },
+        {
+          "ref": "6.3",
+          "title": "Materials handling",
+          "whoCitation": "TRS 961 Annex 14 §6.3",
+          "fields": [
+            {
+              "id": "materialHandlingArrangements",
+              "ref": "6.3",
+              "label": "Handling arrangements: starting materials, packaging materials, bulk and finished products (sampling, quarantine, release, storage)",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §6.3"
+            },
+            {
+              "id": "rejectedMaterialsHandling",
+              "ref": "6.3",
+              "label": "Handling arrangements for rejected materials/products",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §6.3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch7",
+      "number": 7,
+      "title": "Quality Control",
+      "whoCitation": "TRS 961 Annex 14 §7",
+      "subClauses": [
+        {
+          "ref": "7",
+          "title": "QC activities",
+          "whoCitation": "TRS 961 Annex 14 §7",
+          "fields": [
+            {
+              "id": "qcActivitiesDescription",
+              "ref": "7",
+              "label": "Description of on-site QC activities: physical, chemical, microbiological, biological testing scope",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §7"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch8",
+      "number": 8,
+      "title": "Distribution, Complaints, Product Defects and Recalls",
+      "whoCitation": "TRS 961 Annex 14 §8",
+      "subClauses": [
+        {
+          "ref": "8.1",
+          "title": "Distribution",
+          "whoCitation": "TRS 961 Annex 14 §8.1",
+          "fields": [
+            {
+              "id": "shipmentRecipientTypesLocations",
+              "ref": "8.1",
+              "label": "Types/locations of companies receiving shipments (wholesale/manufacturing licence holders; countries/regions)",
+              "inputType": "repeatableTable",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §8.1",
+              "columns": [
+                { "id": "recipientType", "label": "Recipient type", "inputType": "dropdown", "required": true, "options": ["Wholesale licence holder", "Manufacturing licence holder", "Other"] },
+                { "id": "countryRegion", "label": "Country / region", "inputType": "text", "required": true }
+              ],
+              "minRows": 1
+            },
+            {
+              "id": "customerEntitlementVerification",
+              "ref": "8.1",
+              "label": "System to verify customer/recipient legal entitlement to receive medicinal products",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §8.1"
+            },
+            {
+              "id": "transitEnvironmentalConditionsSystem",
+              "ref": "8.1",
+              "label": "System for appropriate environmental conditions during transit (e.g. temperature monitoring/control)",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §8.1"
+            },
+            {
+              "id": "distributionTraceabilityArrangements",
+              "ref": "8.1",
+              "label": "Product distribution and traceability arrangements",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §8.1"
+            },
+            {
+              "id": "illegalSupplyChainPreventionMeasures",
+              "ref": "8.1",
+              "label": "Measures to prevent products entering the illegal supply chain",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §8.1"
+            }
+          ]
+        },
+        {
+          "ref": "8.2",
+          "title": "Complaints, defects, and recalls",
+          "whoCitation": "TRS 961 Annex 14 §8.2",
+          "fields": [
+            {
+              "id": "complaintsDefectsRecallSystem",
+              "ref": "8.2",
+              "label": "Description of complaint, product-defect, and recall handling system",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": "Should cross-reference the platform's own Complaints/Recall module.",
+              "whoCitation": "TRS 961 Annex 14 §8.2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch9",
+      "number": 9,
+      "title": "Self-Inspections",
+      "whoCitation": "TRS 961 Annex 14 §9",
+      "subClauses": [
+        {
+          "ref": "9",
+          "title": "Self-inspection system",
+          "whoCitation": "TRS 961 Annex 14 §9",
+          "fields": [
+            {
+              "id": "selfInspectionSystemDescription",
+              "ref": "9",
+              "label": "Self-inspection system description: area-selection criteria, practical arrangements, follow-up activities",
+              "inputType": "richText",
+              "required": true,
+              "condition": null,
+              "annexLink": null,
+              "helpText": null,
+              "whoCitation": "TRS 961 Annex 14 §9"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "annexes": [
+    {
+      "id": "annex-1",
+      "number": 1,
+      "title": "Copy of valid manufacturing authorization",
+      "whoCitation": "TRS 961 Annex 14, Annex 1",
+      "inputType": "fileUpload",
+      "sourceFieldId": "mfgAuthorizationFile",
+      "linkedFromRefs": ["1.2"],
+      "independentDating": true,
+      "accept": ["application/pdf"]
+    },
+    {
+      "id": "annex-2",
+      "number": 2,
+      "title": "List of dosage forms manufactured, including INN/common names of APIs used",
+      "whoCitation": "TRS 961 Annex 14, Annex 2",
+      "inputType": "repeatableTable",
+      "sourceFieldId": null,
+      "linkedFromRefs": ["1.2", "6.1"],
+      "independentDating": true,
+      "columns": [
+        { "id": "dosageForm", "label": "Dosage form", "inputType": "text", "required": true },
+        { "id": "apiInnNames", "label": "API INN / common name(s)", "inputType": "text", "required": true }
+      ],
+      "note": "Standalone list; also drives optionsSource for the linked multiSelect fields at 1.2 and 6.1."
+    },
+    {
+      "id": "annex-3",
+      "number": 3,
+      "title": "Copy of valid GMP certificate",
+      "whoCitation": "TRS 961 Annex 14, Annex 3",
+      "inputType": "fileUpload",
+      "sourceFieldId": "currentGmpCertificateFile",
+      "linkedFromRefs": ["1.2"],
+      "independentDating": true,
+      "accept": ["application/pdf"]
+    },
+    {
+      "id": "annex-4",
+      "number": 4,
+      "title": "List of contract manufacturers/labs including addresses, contacts, supply-chain flowcharts",
+      "whoCitation": "TRS 961 Annex 14, Annex 4",
+      "inputType": "repeatableTable",
+      "sourceFieldId": "contractManufacturersList",
+      "linkedFromRefs": ["2.3"],
+      "independentDating": true,
+      "columns": [
+        { "id": "name", "label": "Name", "inputType": "text", "required": true },
+        { "id": "address", "label": "Address", "inputType": "text", "required": true },
+        { "id": "contact", "label": "Contact", "inputType": "text", "required": true }
+      ]
+    },
+    {
+      "id": "annex-5",
+      "number": 5,
+      "title": "Organizational chart(s)",
+      "whoCitation": "TRS 961 Annex 14, Annex 5",
+      "inputType": "fileUpload",
+      "sourceFieldId": "organizationChartFile",
+      "linkedFromRefs": ["3"],
+      "independentDating": true,
+      "accept": ["application/pdf", "image/png", "image/jpeg"]
+    },
+    {
+      "id": "annex-6",
+      "number": 6,
+      "title": "Production area layouts: material/personnel flow, process flowcharts per product type",
+      "whoCitation": "TRS 961 Annex 14, Annex 6",
+      "inputType": "fileUpload",
+      "sourceFieldId": "productionAreaLayoutsFile",
+      "linkedFromRefs": ["4.1"],
+      "independentDating": true,
+      "accept": ["application/pdf", "image/png", "image/jpeg"]
+    },
+    {
+      "id": "annex-7",
+      "number": 7,
+      "title": "Schematic drawings of water systems",
+      "whoCitation": "TRS 961 Annex 14, Annex 7",
+      "inputType": "fileUpload",
+      "sourceFieldId": "waterSystemSchematicFile",
+      "linkedFromRefs": ["4.1.2"],
+      "independentDating": true,
+      "accept": ["application/pdf", "image/png", "image/jpeg"]
+    },
+    {
+      "id": "annex-8",
+      "number": 8,
+      "title": "List of major production and laboratory equipment",
+      "whoCitation": "TRS 961 Annex 14, Annex 8",
+      "inputType": "repeatableTable",
+      "sourceFieldId": "labEquipmentList",
+      "linkedFromRefs": ["4.2.1"],
+      "independentDating": true,
+      "columns": [
+        { "id": "equipmentName", "label": "Equipment", "inputType": "text", "required": true },
+        { "id": "model", "label": "Model", "inputType": "text", "required": false },
+        { "id": "location", "label": "Location", "inputType": "text", "required": true },
+        { "id": "isCritical", "label": "Critical item", "inputType": "dropdown", "required": true, "options": ["Yes", "No"] }
+      ]
+    }
+  ],
+  "jurisdictionProfiles": [
+    {
+      "id": "gh",
+      "name": "Ghana",
+      "authority": "Ghana FDA",
+      "reviewIntervalMonths": 24,
+      "reviewIntervalProvenance": "Default from URS FR-SMF-07 ('configurable interval, default 2 years'); not Ghana-FDA-specific — no jurisdiction-specific interval has been confirmed.",
+      "exportOrder": {
+        "chaptersFirst": true,
+        "thenWhoAnnexes": true,
+        "thenJurisdictionAppendices": true
+      },
+      "terminology": {
+        "regulator": "Ghana FDA",
+        "inspectorRole": "Ghana FDA Inspector"
+      },
+      "supplementaryAppendices": [
+        {
+          "id": "gh-location-plan",
+          "title": "Location Plan",
+          "description": "Sketch map of plant location using recognizable landmarks and driving/walking directions",
+          "inputType": "fileUpload",
+          "accept": ["application/pdf", "image/png", "image/jpeg"],
+          "mandatory": false,
+          "blocksSubmission": false,
+          "status": "advisory-unverified",
+          "provenance": "URS §6: sourced from an unverified secondary reference (a screenshot of another AI assistant's output), not Ghana FDA's own published guidance. Do not enforce as a hard validation blocker (FR-SMF-16).",
+          "exportOrder": 1
+        },
+        {
+          "id": "gh-floor-plans",
+          "title": "Floor Plans",
+          "description": "Detailed structural layouts of manufacturing areas; for drug facilities, structural P&ID engineering prints for water/HVAC systems (A2/A3 format)",
+          "inputType": "fileUpload",
+          "accept": ["application/pdf", "image/vnd.dwg", "application/octet-stream"],
+          "mandatory": false,
+          "blocksSubmission": false,
+          "status": "advisory-unverified",
+          "provenance": "URS §6: unverified secondary source; see gh-location-plan provenance note. Large-format CAD/P&ID exports — plan for chunked resumable upload.",
+          "exportOrder": 2
+        },
+        {
+          "id": "gh-environmental-permit",
+          "title": "Environmental Permit",
+          "description": "Verified clearance certificate from the Environmental Protection Agency (EPA) Ghana",
+          "inputType": "fileUpload",
+          "accept": ["application/pdf"],
+          "mandatory": false,
+          "blocksSubmission": false,
+          "status": "advisory-unverified",
+          "provenance": "URS §6: unverified secondary source; see gh-location-plan provenance note.",
+          "exportOrder": 3
+        },
+        {
+          "id": "gh-assembly-permit",
+          "title": "Assembly Permit",
+          "description": "Architectural engineering permit issued by the local District, Municipal, or Metropolitan Assembly",
+          "inputType": "fileUpload",
+          "accept": ["application/pdf"],
+          "mandatory": false,
+          "blocksSubmission": false,
+          "status": "advisory-unverified",
+          "provenance": "URS §6: unverified secondary source; see gh-location-plan provenance note.",
+          "exportOrder": 4
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,977 @@
+openapi: 3.1.0
+info:
+  title: SMF Digitization API
+  version: "0.1.0"
+  license:
+    name: Proprietary
+    identifier: LicenseRef-Proprietary
+  description: |
+    Contract for the Site Master File (SMF) digitization module, Phase 1.
+
+    Owned by the frontend team (see DECISIONS.md) because no backend engine
+    exists yet. This spec — together with schema/template.json — is the
+    authoritative deliverable the backend team implements against. MSW mocks
+    in this repo are generated against this same spec; when the real backend
+    lands, deleting the MSW setup is a one-line change.
+
+    Design notes that affect implementation:
+      - Optimistic concurrency: every mutable resource (chapter, annex,
+        document) carries a `revision` token. Writes must send the token
+        they last read; a stale token returns 409 with the current server
+        state so the client can render a diff and let the user resolve it.
+        Silent last-write-wins is not acceptable in a GMP document.
+      - File uploads use the tus resumable upload protocol (see the
+        `/uploads` section) because Ghana appendix uploads include large
+        CAD/P&ID exports. The mock backend (MSW) accepts single-shot
+        multipart for simplicity; the real backend MUST implement tus.
+      - This API's export preview (rendered client-side with paged.js from
+        the same template.json) is the reference implementation the
+        server-side PDF/A renderer must visually match — same section
+        order, same page breaks are not required to match exactly, but
+        chapter/annex/appendix ORDER and content must.
+      - Chapters and annexes are versioned independently (FR-SMF-03): an
+        annex revision does not bump the parent document edition.
+      - No auth/audit-trail/e-signature endpoints are defined here — per
+        the platform NFRs (URS §10) those are expected to be provided by a
+        platform shell this module plugs into later. Every endpoint here
+        assumes an already-authenticated caller and that audit logging of
+        state transitions happens at the platform layer, not here.
+
+servers:
+  - url: /api/smf/v1
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: documents
+    description: Document-level metadata, edition lifecycle, and edition history.
+  - name: chapters
+    description: Per-chapter/sub-clause content (Chapters 1-9).
+  - name: annexes
+    description: WHO Annexes 1-8, independently dated and versioned from the parent document.
+  - name: workflow
+    description: Draft -> Submitted -> QA Review -> Approved transitions.
+  - name: uploads
+    description: Resumable (tus) file upload for chapter fields, annexes, and jurisdiction appendices.
+  - name: export
+    description: WHO-format export preview and PDF/A generation.
+  - name: jurisdiction-profiles
+    description: Jurisdiction configuration (Ghana today; NAFDAC/PPB/EU/PIC-S as future profiles).
+  - name: jurisdiction-appendices
+    description: Per-document file attachments for the active jurisdiction profile's supplementary appendices (FR-SMF-15/16) — advisory only, never a submission blocker.
+  - name: inspector
+    description: Read-only edition access and edition-to-edition diffing for regulatory inspectors.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: >
+        Placeholder only — declared to keep this spec self-consistent and
+        codegen-friendly. Real authentication is a platform-shell concern
+        (URS §10 NFRs) and is not implemented by this module or its MSW
+        mocks; every mock handler treats all requests as already
+        authenticated. The real backend's actual auth mechanism supersedes
+        this scheme without changing any other part of this contract.
+
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequest:
+      description: Request failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  parameters:
+    editionId:
+      name: editionId
+      in: path
+      required: true
+      description: >
+        Either a concrete edition id (immutable, approved) or the literal
+        string "current" to mean the current working draft edition.
+      schema:
+        type: string
+    chapterRef:
+      name: chapterRef
+      in: path
+      required: true
+      description: WHO chapter/sub-clause ref, e.g. "4.1.2".
+      schema:
+        type: string
+    annexId:
+      name: annexId
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: "^annex-[1-8]$"
+    ifMatchRevision:
+      name: If-Match
+      in: header
+      required: true
+      description: >
+        The `revision` token last read for this resource. Required on every
+        mutating request. A mismatch returns 409 Conflict.
+      schema:
+        type: string
+
+  schemas:
+    Revisioned:
+      type: object
+      required: [revision, updatedAt, updatedBy]
+      properties:
+        revision:
+          type: string
+          description: Opaque optimistic-concurrency token. Changes on every write.
+        updatedAt:
+          type: string
+          format: date-time
+        updatedBy:
+          $ref: "#/components/schemas/UserRef"
+
+    UserRef:
+      type: object
+      required: [id, name, role]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [factory_user, qa_reviewer, inspector, regulatory_analyst]
+
+    DocumentStatus:
+      type: string
+      enum: [draft, qa_review, approved]
+      description: >
+        Three states, not the four the URS's prose might suggest — "the
+        Factory User submits" and "it is now in QA review" are the same
+        transition with no meaningful gap between them (no endpoint ever
+        needs to represent "submitted but review hasn't started"), so
+        POST /submit's target status is qa_review directly.
+
+    SmfDocument:
+      allOf:
+        - $ref: "#/components/schemas/Revisioned"
+        - type: object
+          required:
+            - id
+            - editionNumber
+            - status
+            - jurisdictionProfileId
+            - manufacturerName
+            - siteAddress
+            - completion
+            - dueForReview
+          properties:
+            id:
+              type: string
+            editionNumber:
+              type: integer
+              description: Increments only on QA approval (FR-SMF-04). Draft saves never change this.
+            status:
+              $ref: "#/components/schemas/DocumentStatus"
+            jurisdictionProfileId:
+              type: string
+              example: gh
+            manufacturerName:
+              type: string
+            siteAddress:
+              type: string
+            effectiveDate:
+              type: [string, "null"]
+              format: date
+              description: >
+                The effective date of the current APPROVED edition — null
+                only if no edition of this document has ever been
+                approved. Starting a new working draft does NOT clear
+                this: the previously-approved edition remains the
+                facility's officially effective SMF, with its own real
+                effective date, until a new edition is approved and this
+                value updates. A GMP document mid-revision is still bound
+                by its last approved content, not by nothing.
+            nextReviewDate:
+              type: [string, "null"]
+              format: date
+            completion:
+              $ref: "#/components/schemas/CompletionSummary"
+            dueForReview:
+              $ref: "#/components/schemas/DueForReview"
+
+    CompletionSummary:
+      type: object
+      required: [overallPercent, byChapter]
+      properties:
+        overallPercent:
+          type: number
+          minimum: 0
+          maximum: 100
+        byChapter:
+          type: array
+          items:
+            type: object
+            required: [chapterNumber, percent, requiredFieldCount, completedFieldCount]
+            properties:
+              chapterNumber:
+                type: integer
+              percent:
+                type: number
+              requiredFieldCount:
+                type: integer
+                description: >
+                  Denominator excludes fields whose condition currently
+                  evaluates to false, per FR-SMF-02.
+              completedFieldCount:
+                type: integer
+
+    ChapterContent:
+      allOf:
+        - $ref: "#/components/schemas/Revisioned"
+        - type: object
+          required: [chapterNumber, ref, values, ownerId]
+          properties:
+            chapterNumber:
+              type: integer
+            ref:
+              type: string
+              description: Sub-clause ref this content block belongs to, e.g. "4.1.2".
+            values:
+              type: object
+              description: >
+                Map of fieldId -> field value. Shape of each value depends on
+                the field's inputType in template.json (e.g. repeatableTable
+                -> array of row objects, mapPicker -> {lat,lng,dunsNumber,
+                otherIdentifier}, toggleWithText -> {toggle, text}).
+              additionalProperties: true
+            ownerId:
+              type: [string, "null"]
+              description: >
+                Optional chapter-owner assignment (per-chapter authorship).
+                Present in the contract now so backend can store it even
+                though Phase 1 UI may not expose assignment editing for
+                every chapter. See DECISIONS.md.
+
+    Annex:
+      allOf:
+        - $ref: "#/components/schemas/Revisioned"
+        - type: object
+          required: [id, number, effectiveDate, values, linkedFromRefs]
+          properties:
+            id:
+              type: string
+              pattern: "^annex-[1-8]$"
+            number:
+              type: integer
+            effectiveDate:
+              type: string
+              format: date
+              description: >
+                Independent of the parent document's effectiveDate
+                (FR-SMF-03). Updating an annex does not change the parent
+                document's edition number.
+            values:
+              type: object
+              additionalProperties: true
+            linkedFromRefs:
+              type: array
+              items:
+                type: string
+
+    JurisdictionAppendixFiles:
+      allOf:
+        - $ref: "#/components/schemas/Revisioned"
+        - type: object
+          required: [appendixId, files]
+          properties:
+            appendixId:
+              type: string
+              description: >
+                One of the active jurisdiction profile's
+                supplementaryAppendices ids from template.json (e.g.
+                "gh-location-plan"). Advisory only per FR-SMF-16 — this
+                resource existing has no bearing on whether a document can
+                be submitted.
+            files:
+              type: array
+              items:
+                type: object
+                required: [name, size]
+                properties:
+                  name:
+                    type: string
+                  size:
+                    type: string
+
+    DueForReview:
+      type: object
+      required: [isDue, reason]
+      properties:
+        isDue:
+          type: boolean
+        reason:
+          type: [string, "null"]
+          enum: [date, major_change, null]
+          description: >
+            "date" — within the review-interval approaching window of
+            nextReviewDate (FR-SMF-07's "when due date approaches").
+            "major_change" — flagged on demand via POST
+            .../flag-due-for-review, simulating a major facility change
+            logged elsewhere in the platform (e.g. Equipment, out of
+            scope for this module — see DECISIONS.md). null when not due.
+
+    ReviewComment:
+      type: object
+      required: [id, chapterRef, author, text, createdAt]
+      properties:
+        id:
+          type: string
+        chapterRef:
+          type: string
+          description: Chapter/sub-clause ref this comment is anchored to.
+        author:
+          $ref: "#/components/schemas/UserRef"
+        text:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    ConflictError:
+      type: object
+      required: [error, currentRevision, currentValue]
+      properties:
+        error:
+          type: string
+          example: "revision_conflict"
+        currentRevision:
+          type: string
+        currentValue:
+          description: Full current server-side representation of the resource, for client-side diffing.
+
+    Error:
+      type: object
+      required: [error, message]
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+
+paths:
+  /jurisdiction-profiles:
+    get:
+      tags: [jurisdiction-profiles]
+      operationId: listJurisdictionProfiles
+      summary: List available jurisdiction profiles (Ghana, and future NAFDAC/PPB/EU/PIC-S profiles).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: Same shape as jurisdictionProfiles[] in template.json.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /documents:
+    get:
+      tags: [documents]
+      operationId: listDocuments
+      summary: List SMF documents visible to the caller (normally one per site).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SmfDocument"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+    post:
+      tags: [documents]
+      operationId: createDocument
+      summary: Create a new SMF document shell for a site (Draft, edition 0 / unassigned).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [manufacturerName, siteAddress, jurisdictionProfileId]
+              properties:
+                manufacturerName:
+                  type: string
+                siteAddress:
+                  type: string
+                jurisdictionProfileId:
+                  type: string
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SmfDocument"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /documents/{editionId}:
+    parameters:
+      - $ref: "#/components/parameters/editionId"
+    get:
+      tags: [documents]
+      operationId: getDocument
+      summary: >
+        Fetch document-level metadata for a given edition (or "current" for
+        the working draft). Approved editions are immutable and always
+        retrievable (FR-SMF-06).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SmfDocument"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /documents/{editionId}/editions:
+    parameters:
+      - $ref: "#/components/parameters/editionId"
+    get:
+      tags: [documents]
+      operationId: listDocumentEditions
+      summary: List edition history for this document lineage (for QA/Inspector review and diffing).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required: [editionNumber, status, effectiveDate, approvedBy]
+                  properties:
+                    editionNumber:
+                      type: integer
+                    status:
+                      $ref: "#/components/schemas/DocumentStatus"
+                    effectiveDate:
+                      type: [string, "null"]
+                      format: date
+                    approvedBy:
+                      $ref: "#/components/schemas/UserRef"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /documents/{editionId}/editions/{editionNumberA}/diff/{editionNumberB}:
+    parameters:
+      - $ref: "#/components/parameters/editionId"
+      - name: editionNumberA
+        in: path
+        required: true
+        schema: { type: integer }
+      - name: editionNumberB
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      tags: [inspector]
+      operationId: diffDocumentEditions
+      summary: Field-level diff between two approved editions, for Inspector edition comparison (FR-SMF-08).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [changedFields]
+                properties:
+                  changedFields:
+                    type: array
+                    items:
+                      type: object
+                      required: [fieldId, ref, from, to]
+                      properties:
+                        fieldId: { type: string }
+                        ref: { type: string }
+                        from: {}
+                        to: {}
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /documents/{editionId}/chapters/{chapterRef}:
+    parameters:
+      - $ref: "#/components/parameters/editionId"
+      - $ref: "#/components/parameters/chapterRef"
+    get:
+      tags: [chapters]
+      operationId: getChapter
+      summary: Fetch content for one chapter/sub-clause.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChapterContent"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags: [chapters]
+      operationId: saveChapter
+      summary: >
+        Save this chapter/sub-clause as draft. Independent of other
+        chapters — saving one never affects another's saved state
+        (FR-SMF-02). Only valid while the document is in Draft status.
+      parameters:
+        - $ref: "#/components/parameters/ifMatchRevision"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [values]
+              properties:
+                values:
+                  type: object
+                  additionalProperties: true
+                ownerId:
+                  type: [string, "null"]
+      responses:
+        "200":
+          description: Saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChapterContent"
+        "409":
+          description: Revision conflict — another writer saved since this client last read.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConflictError"
+        "422":
+          description: Document not in Draft status.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /documents/{editionId}/annexes/{annexId}:
+    parameters:
+      - $ref: "#/components/parameters/editionId"
+      - $ref: "#/components/parameters/annexId"
+    get:
+      tags: [annexes]
+      operationId: getAnnex
+      summary: Fetch one annex's current content and effective date.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Annex"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags: [annexes]
+      operationId: saveAnnex
+      summary: >
+        Update an annex's content and/or effective date. Creates a new
+        annex revision without touching the parent document's edition
+        number or the other 8 chapters (FR-SMF-03).
+      parameters:
+        - $ref: "#/components/parameters/ifMatchRevision"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [values, effectiveDate]
+              properties:
+                values:
+                  type: object
+                  additionalProperties: true
+                effectiveDate:
+                  type: string
+                  format: date
+      responses:
+        "200":
+          description: Saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Annex"
+        "409":
+          description: Revision conflict.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConflictError"
+
+  /documents/{editionId}/annexes/{annexId}/revisions:
+    parameters:
+      - $ref: "#/components/parameters/editionId"
+      - $ref: "#/components/parameters/annexId"
+    get:
+      tags: [annexes]
+      operationId: listAnnexRevisions
+      summary: Revision history for this annex, independent of the parent document's edition history.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Annex"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /documents/{editionId}/jurisdiction-appendices/{appendixId}:
+    parameters:
+      - $ref: "#/components/parameters/editionId"
+      - name: appendixId
+        in: path
+        required: true
+        description: An id from the active jurisdiction profile's supplementaryAppendices in template.json (e.g. "gh-location-plan").
+        schema:
+          type: string
+    get:
+      tags: [jurisdiction-appendices]
+      operationId: getJurisdictionAppendixFiles
+      summary: Fetch the files attached to one jurisdiction appendix.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JurisdictionAppendixFiles"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags: [jurisdiction-appendices]
+      operationId: saveJurisdictionAppendixFiles
+      summary: >
+        Replace the file list attached to one jurisdiction appendix.
+        Advisory only (FR-SMF-16) — this resource being empty, or this
+        call never having been made, has no bearing on whether the
+        document can be submitted for QA review.
+      parameters:
+        - $ref: "#/components/parameters/ifMatchRevision"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [files]
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: object
+                    required: [name, size]
+                    properties:
+                      name: { type: string }
+                      size: { type: string }
+      responses:
+        "200":
+          description: Saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JurisdictionAppendixFiles"
+        "409":
+          description: Revision conflict.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConflictError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /documents/{editionId}/submit:
+    parameters:
+      - $ref: "#/components/parameters/editionId"
+    post:
+      tags: [workflow]
+      operationId: submitDocument
+      summary: >
+        Factory User marks the full SMF ready for QA review. Draft -> QA Review.
+      parameters:
+        - $ref: "#/components/parameters/ifMatchRevision"
+      responses:
+        "200":
+          description: Status transitioned to qa_review.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SmfDocument"
+        "422":
+          description: Not all required fields complete, or document not in Draft.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /documents/{editionId}/qa-review:
+    parameters:
+      - $ref: "#/components/parameters/editionId"
+    post:
+      tags: [workflow]
+      operationId: reviewDocument
+      summary: >
+        Facility QA Reviewer approves or rejects a submitted SMF
+        (FR-SMF-05). Approval increments editionNumber and creates an
+        immutable version (FR-SMF-04, FR-SMF-06). Rejection returns status
+        to Draft and attaches comments visible inline against the chapters
+        they refer to.
+      parameters:
+        - $ref: "#/components/parameters/ifMatchRevision"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision:
+                  type: string
+                  enum: [approve, reject]
+                comments:
+                  type: array
+                  description: Required when decision = reject.
+                  items:
+                    type: object
+                    required: [chapterRef, text]
+                    properties:
+                      chapterRef: { type: string }
+                      text: { type: string }
+      responses:
+        "200":
+          description: Decision applied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SmfDocument"
+        "422":
+          description: Document not in QA Review status, or reject without comments.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /documents/{editionId}/flag-due-for-review:
+    parameters:
+      - $ref: "#/components/parameters/editionId"
+    post:
+      tags: [workflow]
+      operationId: flagDueForReview
+      summary: >
+        FR-SMF-07's on-demand trigger: flag the SMF "Due for Review"
+        because a major facility change was logged elsewhere in the
+        platform (e.g. Equipment — out of scope for this module, so this
+        endpoint is what such a module would call). Distinct from the
+        automatic date-based flag on `dueForReview` (see DueForReview
+        schema), which needs no trigger — it's computed from
+        nextReviewDate on every read. The flag clears automatically the
+        next time this document's current edition is approved (§FR-SMF-04)
+        — approving a new edition IS the review this flag was requesting.
+      responses:
+        "200":
+          description: Flagged.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SmfDocument"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /documents/{editionId}/comments:
+    parameters:
+      - $ref: "#/components/parameters/editionId"
+    get:
+      tags: [workflow]
+      operationId: listReviewComments
+      summary: List reviewer comments for the current review cycle, for inline display against chapters.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReviewComment"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /uploads:
+    post:
+      tags: [uploads]
+      operationId: createUpload
+      summary: >
+        Create a resumable upload (tus protocol — see
+        https://tus.io/protocols/resumable-upload). Real backend MUST speak
+        tus for chunked/resumable uploads of large files (Ghana Floor Plan
+        P&ID/CAD exports in particular). The MSW mock in this repo accepts
+        a simple single-shot multipart POST here for developer convenience;
+        that shortcut is NOT part of the contract.
+      requestBody:
+        required: true
+        content:
+          application/offset+octet-stream:
+            schema:
+              type: string
+              format: binary
+      parameters:
+        - name: Upload-Length
+          in: header
+          required: true
+          schema: { type: integer }
+        - name: Upload-Metadata
+          in: header
+          required: true
+          description: tus metadata, base64-encoded key-value pairs (filename, filetype, fieldId).
+          schema: { type: string }
+      responses:
+        "201":
+          description: Upload created.
+          headers:
+            Location:
+              schema: { type: string }
+              description: URL to PATCH subsequent chunks to.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /uploads/{uploadId}:
+    parameters:
+      - name: uploadId
+        in: path
+        required: true
+        schema: { type: string }
+    patch:
+      tags: [uploads]
+      operationId: appendUploadChunk
+      summary: Append a chunk (tus protocol).
+      parameters:
+        - name: Upload-Offset
+          in: header
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/offset+octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "204":
+          description: Chunk accepted.
+        "404":
+          $ref: "#/components/responses/NotFound"
+    get:
+      tags: [uploads]
+      operationId: getUpload
+      summary: Fetch upload metadata/status, or download the completed file for inline preview.
+      responses:
+        "200":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /documents/{editionId}/export/preview:
+    parameters:
+      - $ref: "#/components/parameters/editionId"
+    get:
+      tags: [export]
+      operationId: getExportPreview
+      summary: >
+        Server-computed export preview payload: fully resolved chapter +
+        annex + jurisdiction-appendix content in fixed WHO order (Chapters
+        1-9, then Annexes 1-8, then jurisdiction appendices — FR-SMF-09,
+        FR-SMF-14), plus a page-count estimate. The frontend renders this
+        with paged.js as the reference layout the server-side PDF/A
+        renderer must match (see top-level description).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [coverPage, tableOfContents, sections, estimatedBodyPageCount]
+                properties:
+                  coverPage:
+                    type: object
+                    required: [manufacturerName, siteAddress, editionNumber, effectiveDate, nextReviewDate]
+                    properties:
+                      manufacturerName: { type: string }
+                      siteAddress: { type: string }
+                      editionNumber: { type: integer }
+                      effectiveDate: { type: [string, "null"], format: date }
+                      nextReviewDate: { type: [string, "null"], format: date }
+                  tableOfContents:
+                    type: array
+                    items:
+                      type: object
+                      required: [ref, title, level]
+                      properties:
+                        ref: { type: string }
+                        title: { type: string }
+                        level: { type: integer }
+                  sections:
+                    type: array
+                    description: Ordered Chapters 1-9, then Annexes 1-8, then jurisdiction appendices.
+                    items:
+                      type: object
+                  estimatedBodyPageCount:
+                    type: integer
+                    description: Main body only (Chapters 1-9), excludes appendices. Drives the FR-SMF-13 advisory banner at ~25-30 pages.
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /documents/{editionId}/export/pdf:
+    parameters:
+      - $ref: "#/components/parameters/editionId"
+    post:
+      tags: [export]
+      operationId: requestPdfExport
+      summary: >
+        Request server-side PDF/A generation. NOT implemented by the mock
+        (out of scope for this frontend deliverable) — real backend
+        generates this to match the client-side preview above.
+      responses:
+        "202":
+          description: Accepted, generation queued.
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "501":
+          description: Not implemented (expected response from MSW mock).
