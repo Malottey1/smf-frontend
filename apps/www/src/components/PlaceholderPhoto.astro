@@ -1,0 +1,15 @@
+---
+// Labelled placeholder for photography we couldn't yet source or commission.
+// Renders at the correct aspect ratio so layout doesn't shift once a real
+// photo lands — replace the block with an Astro <Image> when one exists.
+// See README.md "Photography shot list" for the running list these feed.
+interface Props {
+  ratio: string; // e.g. "16/9", "4/5"
+  shot: string;  // what the commissioned/sourced photo should show
+  minHeight?: string;
+}
+const { ratio, shot, minHeight } = Astro.props;
+---
+<div class="placeholder-photo" style={`aspect-ratio:${ratio};${minHeight ? ` min-height:${minHeight};` : ""}`} role="img" aria-label={`Placeholder for photograph: ${shot}`}>
+  <p class="caption"><strong>[PLACEHOLDER PHOTOGRAPH]</strong> — {shot}</p>
+</div>

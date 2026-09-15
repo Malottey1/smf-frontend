@@ -1,0 +1,58 @@
+---
+import Monogram from "./Monogram.astro";
+import Wordmark from "./Wordmark.astro";
+
+const nav = [
+  { href: "/services", label: "Services" },
+  { href: "/platform", label: "Platform" },
+  { href: "/insights", label: "Insights" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
+];
+const path = Astro.url.pathname;
+---
+<header class="site-header">
+  <div class="wrap bar">
+    <a href="/" class="brand-lockup" aria-label="Numeric Technologies, home">
+      <Monogram class="mono" />
+      <Wordmark class="word" />
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="main-nav">
+      Menu
+    </button>
+    <nav class="main-nav" id="main-nav" aria-label="Primary" data-open="true">
+      <ul>
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={path.startsWith(item.href) ? "page" : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Mobile nav toggle. No framework, no dependency — a few hundred bytes.
+  const toggle = document.getElementById("nav-toggle");
+  const nav = document.getElementById("main-nav");
+  const mq = window.matchMedia("(max-width: 720px)");
+
+  function sync() {
+    if (mq.matches) {
+      nav?.setAttribute("data-open", "false");
+    } else {
+      nav?.setAttribute("data-open", "true");
+    }
+  }
+  sync();
+  mq.addEventListener("change", sync);
+
+  toggle?.addEventListener("click", () => {
+    const open = nav?.getAttribute("data-open") === "true";
+    nav?.setAttribute("data-open", open ? "false" : "true");
+    toggle.setAttribute("aria-expanded", open ? "false" : "true");
+  });
+</script>

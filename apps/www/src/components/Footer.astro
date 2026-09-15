@@ -1,0 +1,28 @@
+---
+import Monogram from "./Monogram.astro";
+
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <Monogram class="mono" />
+        <span>Numeric Technologies</span>
+      </div>
+      <nav aria-label="Footer">
+        <ul>
+          <li><a href="/services">Services</a></li>
+          <li><a href="/platform">Platform</a></li>
+          <li><a href="/insights">Insights</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="legal">
+      © {year} Numeric Technologies. Registered company name, registration
+      number and address: [PLACEHOLDER — see LAUNCH-CHECKLIST.md].
+    </p>
+  </div>
+</footer>

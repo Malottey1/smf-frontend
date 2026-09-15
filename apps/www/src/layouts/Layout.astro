@@ -1,0 +1,77 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  path?: string;
+}
+const { title, description, path = Astro.url.pathname } = Astro.props;
+const canonicalURL = new URL(path, Astro.site);
+const ogImageURL = new URL("/og-default.png", Astro.site); // [PLACEHOLDER] — see README
+
+// Organization JSON-LD: only facts we actually have. Do NOT add address,
+// telephone, foundingDate, etc. here until LAUNCH-CHECKLIST.md's
+// "Company details" section is filled in — a wrong structured-data address
+// or phone number is worse than none.
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Numeric Technologies",
+  url: Astro.site?.toString(),
+  description:
+    "Ghana-based IT solutions company specializing in the customization and integration of software for the pharmaceutical and healthcare sector.",
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · Numeric Technologies</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={`${title} · Numeric Technologies`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style is:global>
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--color-deep);
+    color: var(--color-white);
+    padding: var(--space-3) var(--space-4);
+    z-index: 100;
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+  }
+  .skip-link:focus {
+    left: var(--space-4);
+    top: var(--space-4);
+  }
+</style>
