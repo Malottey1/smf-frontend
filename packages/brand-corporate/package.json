@@ -1,0 +1,11 @@
+{
+  "name": "@numeric/brand-corporate",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Corporate brand assets for Numeric Technologies: logo SVGs, self-hosted fonts, and design tokens for apps/www. Not shared with apps/smf-frontend (GxP Console keeps its own distinct visual system).",
+  "exports": {
+    "./tokens.css": "./src/tokens/tokens.css",
+    "./logo/*": "./src/logo/*"
+  }
+}
