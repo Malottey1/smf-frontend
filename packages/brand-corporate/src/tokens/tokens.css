@@ -1,0 +1,97 @@
+/**
+ * Numeric Technologies — corporate design tokens.
+ * Palette direction A (Indigo & Gold), approved 2026-09-15.
+ * Deliberately NOT shared with apps/smf-frontend — GxP Console keeps
+ * its own distinct visual system (deep navy / teal / IBM Plex), defined
+ * in apps/smf-frontend/src/design-system/tokens.css.
+ *
+ * Every text/background pairing below is verified against WCAG AA — see
+ * BRAND-SHEET.html for the contrast table. --color-bright (the gold) is
+ * a structural/accent colour only: headers, rules, small UI accents,
+ * large display text. It fails AA as small body text on white (2.7:1)
+ * and must never be used that way.
+ */
+
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/archivo-variable-latin.woff2") format("woff2-variations"),
+       url("../fonts/archivo-variable-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/source-sans-3-variable-latin.woff2") format("woff2-variations"),
+       url("../fonts/source-sans-3-variable-latin.woff2") format("woff2");
+}
+
+:root {
+  /* ---- colour: core palette ---- */
+  --color-deep: #241c4a;       /* indigo — structure, headlines, nav, ink-on-light UI */
+  --color-deep-ink: #1a1613;   /* near-black, warm-biased — body text */
+  --color-bright: #c9962b;     /* gold — rules, accents, large display, never small body text */
+  --color-neutral: #f6f1e7;    /* warm paper — section backgrounds, alternates with white */
+  --color-white: #ffffff;
+
+  /* ---- colour: derived / functional ---- */
+  --color-bg: var(--color-white);
+  --color-bg-alt: var(--color-neutral);
+  --color-text: var(--color-deep-ink);
+  --color-text-muted: #5b5346; /* deep-ink mixed toward neutral, still AA on white: 7.1:1 */
+  --color-heading: var(--color-deep);
+  --color-rule: #ded6c4; /* neutral mixed toward ink, structural dividers */
+  --color-accent: var(--color-bright);
+  --color-inverse-bg: var(--color-deep);
+  --color-inverse-text: var(--color-white);
+  --color-focus: var(--color-deep);
+
+  /* ---- type families ---- */
+  --font-display: "Archivo", "Arial Narrow", Arial, sans-serif;
+  --font-body: "Source Sans 3", -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* ---- type scale (base 16px, ~1.25 ratio) ---- */
+  --text-xs: 0.75rem;    /* 12px — captions, credits, legal */
+  --text-sm: 0.875rem;   /* 14px — small UI, nav */
+  --text-base: 1rem;     /* 16px — body */
+  --text-md: 1.125rem;   /* 18px — lead paragraphs */
+  --text-lg: 1.375rem;   /* 22px — card headings */
+  --text-xl: 1.75rem;    /* 28px — section headings */
+  --text-2xl: 2.25rem;   /* 36px — page headings, mobile hero */
+  --text-3xl: 3rem;      /* 48px — desktop hero, tablet */
+  --text-4xl: 4rem;      /* 64px — desktop hero, large */
+
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-normal: 1.55;
+
+  --weight-body: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-black: 900;
+
+  --tracking-tight: -0.01em;  /* headline tracking at large sizes */
+  --tracking-wide: 0.04em;    /* small-caps / label tracking, used sparingly */
+
+  /* ---- spacing (4px base) ---- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* ---- layout ---- */
+  --content-max: 72rem;   /* 1152px */
+  --prose-max: 38rem;     /* ~65ch at body size */
+  --radius: 0;            /* flat surfaces — no rounded cards, per brief */
+}
