@@ -32,7 +32,7 @@ inventory.
 
 ## Assets
 
-- [ ] **Commissioned photography to replace stock** — see `README.md` → Photography shot list; currently 2 placeholder slots on Home (hero + positioning section), more will follow as Services/About/Platform are built
+- [ ] **Commissioned photography to replace stock** — Home's two photos (hero, "The moment for Ghana") are real stock from Pexels, neither actually shot in Ghana (Kinshasa and Lagos respectively — see `CREDITS.md`); worth replacing with real Ghanaian photography when available. About's Team section is still a placeholder, not stock — see `CREDITS.md` for why that one's different.
 - [ ] **Any existing brand materials** (old logo, letterhead, signage) — to check against/retire once the new identity ships; not blocking, but worth a look before launch
 
 ## Legal & operational

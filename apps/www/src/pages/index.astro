@@ -1,6 +1,8 @@
 ---
+import { Picture } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
-import PlaceholderPhoto from "../components/PlaceholderPhoto.astro";
+import kinshasaLab from "../assets/images/kinshasa-laboratory.jpg";
+import lagosPharmacy from "../assets/images/lagos-pharmacy-counter.jpg";
 
 const pillars = [
   {
@@ -45,12 +47,15 @@ const pillars = [
           efficiently, and in full compliance with FDA Ghana requirements.
         </p>
       </div>
-    </div>
-    <div class="hero-photo-frame">
-      <PlaceholderPhoto
-        ratio="21/9"
-        minHeight="320px"
-        shot="A pharmaceutical manufacturing floor or QC laboratory in Ghana — a technician at an instrument, natural light, documentary style. Not staged, not AI-generated. See README.md shot list."
+      <Picture
+        src={kinshasaLab}
+        alt="A scientist in a lab coat pours liquid between glassware in a laboratory."
+        widths={[320, 640, 960]}
+        sizes="(min-width: 860px) 28rem, 100vw"
+        formats={["avif", "webp"]}
+        loading="eager"
+        fetchpriority="high"
+        class="hero-photo"
       />
     </div>
   </section>
@@ -108,9 +113,14 @@ const pillars = [
           expertise with African market opportunity.
         </p>
       </div>
-      <PlaceholderPhoto
-        ratio="4/5"
-        shot="Ghanaian pharmaceutical distribution or a community pharmacy counter — real work, real people, Accra or Kumasi. Not staged. See README.md shot list."
+      <Picture
+        src={lagosPharmacy}
+        alt="A pharmacist and a customer review a medicine box together at a pharmacy counter."
+        widths={[320, 640, 900]}
+        sizes="(min-width: 780px) 24rem, 100vw"
+        formats={["avif", "webp"]}
+        loading="lazy"
+        class="positioning-photo"
       />
     </div>
   </section>
@@ -144,9 +154,15 @@ const pillars = [
 </Layout>
 
 <style>
-  .hero { padding-top: var(--space-16); }
-  .hero-grid { padding-bottom: var(--space-12); }
-  .hero-text { max-width: 46rem; }
+  .hero { padding-top: var(--space-16); padding-bottom: var(--space-16); }
+  .hero-grid {
+    display: grid;
+    gap: var(--space-8);
+    align-items: center;
+  }
+  @media (min-width: 860px) {
+    .hero-grid { grid-template-columns: 1.15fr 1fr; gap: var(--space-16); }
+  }
   .hero-text h1 {
     font-size: var(--text-3xl);
     margin-bottom: var(--space-6);
@@ -160,9 +176,10 @@ const pillars = [
     margin-bottom: var(--space-4);
   }
   .hero-text .prose + .prose { margin-top: var(--space-4); }
-  .hero-photo-frame { padding-inline: 0; }
-  @media (min-width: 720px) {
-    .hero-photo-frame { padding-inline: var(--space-8); }
+  .hero-photo {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--color-rule);
   }
 
   .two-col { display: grid; gap: var(--space-6); }
@@ -202,9 +219,14 @@ const pillars = [
 
   .positioning-grid { display: grid; gap: var(--space-8); align-items: center; }
   @media (min-width: 780px) {
-    .positioning-grid { grid-template-columns: 1.1fr 0.9fr; gap: var(--space-16); }
+    .positioning-grid { grid-template-columns: 1fr 1fr; gap: var(--space-16); }
   }
   .positioning-grid h2 { font-size: var(--text-xl); margin-bottom: var(--space-5); }
+  .positioning-photo {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--color-rule);
+  }
 
   .mission-section { padding-block: var(--space-32); }
   .mission-quote {

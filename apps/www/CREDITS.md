@@ -1,43 +1,39 @@
 # Photo credits
 
-No stock photography is used on the site yet. Every image slot on the
-home page is a labelled placeholder (see `README.md` → Photography shot
-list) rather than a photo that doesn't really fit.
+## Home — hero
+- File: `src/assets/images/kinshasa-laboratory.jpg`
+- Source: https://www.pexels.com/photo/scientist-pouring-liquid-into-flask-18712504/
+- Photographer: Carmel Nsenga
+- License: Pexels License (free for commercial and personal use, no attribution required) — https://www.pexels.com/license/
+- Location: Kinshasa, Democratic Republic of the Congo — not Ghana. Alt text and surrounding copy don't claim otherwise.
+- Downloaded: 2026-09-15
+- Note: closest real match found for "a technician at an instrument, documentary style" — genuinely candid working photography, not staged.
 
-## Why nothing was used yet
+## Home — "The moment for Ghana"
+- File: `src/assets/images/lagos-pharmacy-counter.jpg`
+- Source: https://www.pexels.com/photo/african-customers-shopping-in-lagos-pharmacy-30678215/
+- Photographer: Ninthgrid
+- License: Pexels License (free for commercial and personal use, no attribution required) — https://www.pexels.com/license/
+- Location: Lagos, Nigeria — not Ghana. Alt text and surrounding copy don't claim otherwise.
+- Downloaded: 2026-09-15
+- Note: the most polished/styled of the photos used here (see the search notes below) — used on explicit instruction to prefer a real photo over a placeholder.
 
-I searched Pexels, Unsplash and Nappy.co for Ghanaian/African
-pharmaceutical manufacturing, QC laboratory, warehouse and pharmacy
-photography. Two honest findings:
+## About — Team
+Still a placeholder, deliberately, even though the brief now says to use stock
+photography elsewhere. A "Team" section is a factual claim about who
+specific named people are — using stock photos of unrelated people there
+would misrepresent them as Numeric employees, which is a different kind of
+problem than an atmospheric workplace shot being generic. This one needs
+real photos of the real team, not a substitute. Flag if you'd rather I treat
+it the same as the other two.
 
-- Location + industry search terms (e.g. "Ghana pharmacy", "Ghana
-  pharmaceutical manufacturing") mostly return generic global stock —
-  confirms the brief's own warning that stock is a stopgap here.
-- The closest real candidate found — **["African customers shopping in
-  Lagos pharmacy"](https://www.pexels.com/photo/african-customers-shopping-in-lagos-pharmacy-30678215/)**
-  by photographer **Ninthgrid**, Pexels license (free to use, no
-  attribution required), Lagos, Nigeria, not Ghana — reads as a styled
-  lifestyle/commercial shoot (glam styling, posed interaction, even
-  studio-bright lighting) rather than the documentary "technician at an
-  instrument" register the brief asks for. It's real photography of a
-  real West African pharmacy, not AI-generated and not generic Western
-  stock, but it didn't clear the "could this be any company anywhere"
-  and "documentary rather than staged" bars, so it's not used. It's
-  recorded here in case you'd rather override that judgment than wait
-  for commissioned photography — if so, it needs correcting captioning
-  as Lagos, Nigeria, not Ghana.
+## Search notes
 
-## When a real photo is added here
-
-Each entry should follow this format:
-
-```
-## <where it's used>
-- File: `src/assets/<filename>`
-- Source: <URL>
-- Photographer: <name>
-- License: <license name + link>
-- Downloaded: <date>
-```
-
-Never hotlink — download the file and commit it under `src/assets/`.
+Search terms combining a specific location with the industry (e.g. "Ghana
+pharmacy", "Ghana pharmaceutical manufacturing") mostly returned generic
+global stock, not Ghana-specific results — as the original brief
+anticipated. Widening the search to "African" + industry terms (rather than
+Ghana specifically) surfaced the two real, non-AI, non-generic-Western
+candidates used above. Diaspora/Western results (e.g. photos explicitly
+tagged "African American") were excluded — the brief calls for African
+context, not just Black subjects photographed anywhere.

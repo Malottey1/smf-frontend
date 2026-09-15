@@ -48,24 +48,28 @@ list mapped to what it unblocks.
 | `<head>` OG image | Using a generated on-brand placeholder (`public/og-default.png`, built from the real logo) until there's real photography worth using instead |
 | `astro.config.mjs` `site` | Placeholder domain — set the real one before launch |
 
-## Photography shot list
+## Photography
 
-No stock photo cleared the brief's bar yet — see `CREDITS.md` for what
-was searched and why nothing was used. Placeholder blocks, at the
-correct aspect ratio so layout won't shift when a real photo lands:
+Two real stock photos are in use (on instruction to prefer that over a
+placeholder) — see `CREDITS.md` for source, photographer, licence and
+why each was picked:
 
-1. **Home hero, 21:9** — a pharmaceutical manufacturing floor or QC
-   laboratory in Ghana. A technician at an instrument, natural light,
-   documentary style. The single most important image on the site —
-   worth waiting for commissioned photography over forcing a stock
-   substitute.
-2. **Home "The moment for Ghana" section, 4:5** — Ghanaian
-   pharmaceutical distribution or a community pharmacy counter, Accra
-   or Kumasi. Real work, real people.
-3. **About "Team," 16:9** — team photography, once there's a team to
-   photograph.
+1. **Home hero** — a scientist working in a laboratory in Kinshasa, DR
+   Congo. Real, candid, non-staged. Not Ghana — the alt text and copy
+   don't claim it is.
+2. **Home "The moment for Ghana" section** — a pharmacist and customer
+   at a pharmacy counter in Lagos, Nigeria. Real, but the most
+   styled/staged of the two — the honest trade-off is logged in
+   `CREDITS.md`.
 
-Services and Platform deliberately carry no image placeholders —
-they're dense, informational pages where forcing an empty placeholder
-block wouldn't earn its space. Revisit once there's a photo library to
-draw from.
+Remaining placeholder:
+
+3. **About "Team," 16:9** — deliberately still a placeholder even
+   though the two above are now real photos. A stock photo of
+   unrelated people captioned as "the team" would misrepresent who
+   they are, which isn't the same category of problem as generic
+   workplace photography. Needs actual photos of the actual team.
+
+Services and Platform carry no image placeholders — they're dense,
+informational pages where forcing an empty block wouldn't earn its
+space.
