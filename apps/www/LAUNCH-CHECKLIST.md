@@ -17,7 +17,7 @@ inventory.
 
 ## Credibility
 
-- [ ] **Team members: names, roles, short bios, headshots** — About (marked as placeholder section)
+- [ ] **Team members: names, roles, short bios, headshots** — About (`/about` → "Team" section, currently a single labelled placeholder block rather than fake per-person cards, deliberately — see that page's comments)
 - [ ] **Client names + permission to use them** — About and/or Home, if you want named clients anywhere
 - [ ] **Case studies, with client sign-off** — About or a future Insights/Case Studies section
 - [ ] **Certifications & accreditations, with issuing body and dates** — About, possibly Services (Quality Systems pillar)
@@ -26,9 +26,9 @@ inventory.
 
 ## Content
 
-- [ ] **Two or three Insights articles** — Insights (content collection scaffolded, no real posts yet)
-- [ ] **Expanded detail for each of the four service pillars** — Services (currently a stub; Home only carries the PDF's one-line taglines, by design)
-- [ ] **Platform page: what can be said publicly about GxP Console, and when** — Platform (currently a stub)
+- [ ] **Two or three Insights articles** — Insights: content collection is live at `/insights`, both current posts (`src/content/insights/*.md`) are explicitly marked `placeholder: true` and need replacing with real, fact-checked writing
+- [ ] **Expanded detail for each of the four service pillars** — Services (`/services`) currently explains each capability by defining the industry term (what a CAPA, PSUR, TMF etc. *is*) rather than claiming what Numeric has specifically delivered — replace/extend with real track record once there's one to publish
+- [ ] **Platform page: what can be said publicly about GxP Console, and when** — Platform (`/platform`), the product panel's `[PLACEHOLDER]` note
 
 ## Assets
 
@@ -39,6 +39,6 @@ inventory.
 
 - [ ] **Privacy policy and terms** — not yet linked anywhere; needs pages + footer links once drafted
 - [ ] **Cookie position, if analytics are added later** — site currently ships with zero third-party requests and no analytics by design; revisit only if that changes
-- [ ] **Where the enquiry form should deliver** — Contact (form not yet built)
+- [ ] **Where the enquiry form should deliver** — Contact (`/contact`, form is built with the real field set but disabled — no submit handler until this is decided)
 - [ ] **Domain and hosting** — `astro.config.mjs` `site` is a placeholder (`https://www.numerictechnologies.example`); update before the sitemap/canonical/OG URLs are real
 - [ ] **Social profiles to link** — Footer (none linked currently)

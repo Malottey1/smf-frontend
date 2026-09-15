@@ -1,12 +1,124 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import PlaceholderPhoto from "../components/PlaceholderPhoto.astro";
 ---
-<Layout title="About" description="About Numeric Technologies — a Ghana-based IT solutions company for the pharmaceutical and healthcare sector.">
-  <section class="section">
-    <div class="wrap prose">
+<Layout
+  title="About"
+  description="About Numeric Technologies — a Ghana-based IT solutions company for the pharmaceutical and healthcare sector."
+>
+  <section class="section about-hero">
+    <div class="wrap">
       <h1>About</h1>
-      <p>This page is being built next — full About content, team and history (marked as placeholders per the brief) come after the home page is signed off.</p>
-      <p><a class="text-link" href="/">← Back home</a></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose about-copy">
+      <p>
+        Numeric Technologies is a Ghana-based IT solutions company
+        specializing in the customization and integration of software
+        for the pharmaceutical and healthcare sector. We combine deep
+        regulatory domain expertise with hands-on software development
+        to help pharmaceutical manufacturers, distributors, and
+        pharmacies build the systems they need to operate safely,
+        efficiently, and in full compliance with FDA Ghana requirements.
+      </p>
+      <p>
+        Our work today spans regulatory and quality compliance services
+        — GMP/QMS gap assessments, audit readiness, and documentation
+        systems — alongside IT support and systems integration for the
+        ERPs, POS, and inventory platforms that keep pharmaceutical
+        distribution running. Every engagement feeds directly into our
+        long-term mission: building a dedicated Quality Management
+        System (QMS) and Laboratory Information Management System
+        (LIMS) platform, designed to integrate with FDA Ghana's digital
+        infrastructure and support both the regulator and pharmaceutical
+        companies in meeting the highest international standards.
+      </p>
+      <p>
+        We see ourselves as more than a vendor. As Ghana works toward
+        advancing its WHO regulatory maturity from Level 3 to Level 4,
+        and as global pharmaceutical companies look to enter West
+        Africa through the AfCFTA, we aim to be the trusted local
+        technical partner that makes that growth possible — de-risking
+        compliance, strengthening local capability, and connecting
+        international expertise with African market opportunity.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <h2>Mission</h2>
+      <p class="mission-quote">
+        Our mission is to deliver creative, technical solutions tailored
+        to unique business needs, providing flexible and scalable
+        systems that make processes efficient, practical, and
+        future-ready.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>History</h2>
+      <div class="placeholder-block">
+        <p><strong>[PLACEHOLDER]</strong> — founding date, years operating and company history aren't in the source documents. See LAUNCH-CHECKLIST.md → "Company details."</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <h2>Team</h2>
+      <div class="placeholder-block">
+        <p><strong>[PLACEHOLDER]</strong> — team members, roles, bios and headshots aren't in the source documents. See LAUNCH-CHECKLIST.md → "Credibility."</p>
+      </div>
+      <div class="team-photo-frame">
+        <PlaceholderPhoto
+          ratio="16/9"
+          shot="Team photography — real people, real workplace, once available. Not a stock substitute."
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>Certifications &amp; partnerships</h2>
+      <div class="placeholder-block">
+        <p><strong>[PLACEHOLDER]</strong> — certifications, accreditations and partnerships aren't in the source documents. See LAUNCH-CHECKLIST.md → "Credibility."</p>
+      </div>
     </div>
   </section>
 </Layout>
+
+<style>
+  .about-hero h1 { font-size: var(--text-3xl); }
+  .about-copy p + p { margin-top: var(--space-5); }
+  .about-copy p { font-size: var(--text-md); }
+
+  h2 { font-size: var(--text-xl); margin-bottom: var(--space-6); }
+
+  .mission-quote {
+    font-family: var(--font-display);
+    font-weight: var(--weight-black);
+    font-size: var(--text-xl);
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-heading);
+    max-width: 30ch;
+  }
+
+  .placeholder-block {
+    border: 1px dashed var(--color-rule);
+    background: var(--color-bg);
+    padding: var(--space-6);
+    max-width: var(--prose-max);
+  }
+  .section-alt .placeholder-block { background: var(--color-bg); }
+  .placeholder-block strong { color: var(--color-text); }
+  .placeholder-block p { color: var(--color-text-muted); font-size: var(--text-sm); }
+
+  .team-photo-frame { margin-top: var(--space-6); max-width: 40rem; }
+</style>

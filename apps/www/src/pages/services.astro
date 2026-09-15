@@ -1,12 +1,183 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+// Pillar taglines are verbatim from Services.pdf (see CONTENT-SOURCE.md).
+// Each capability's explanation below defines the industry term itself —
+// GMP, CAPA, PSUR, GFIRMS, TMF, LIMS, etc. are established regulatory
+// vocabulary, not claims about Numeric Technologies' own track record.
+// That's the line: definitional ("X is...") stays out of "no claim not in
+// the source docs" territory; anything shaped like "we have delivered..."
+// would not.
+const pillars = [
+  {
+    n: "01",
+    name: "Advisory & Strategy",
+    tagline: "Expert guidance to navigate Ghana's regulatory landscape and plan market entry with confidence.",
+    items: [
+      {
+        name: "Regulatory strategy & product classification",
+        detail: "How a product is classified — as a medicine, a medical device, or another category — determines every requirement that follows: labelling, the approval pathway, and which standards apply.",
+      },
+      {
+        name: "Market entry & compliance risk assessment",
+        detail: "Understanding what a market requires before committing resources to it, so compliance risk is identified early rather than discovered partway through an application.",
+      },
+      {
+        name: "FDA Ghana submission management (GFIRMS)",
+        detail: "GFIRMS is the Ghana FDA's electronic Regulatory Information Management System — the system through which applications are submitted to and tracked with the regulator.",
+      },
+      {
+        name: "Regulatory intelligence & policy monitoring",
+        detail: "Tracking regulatory changes as they're published, rather than encountering them for the first time at the next audit or submission.",
+      },
+    ],
+  },
+  {
+    n: "02",
+    name: "Quality Systems",
+    tagline: "End-to-end quality infrastructure that keeps you audit-ready, always.",
+    items: [
+      {
+        name: "QMS design & implementation",
+        detail: "A Quality Management System is the documented set of processes an organization uses to consistently meet quality and regulatory requirements.",
+      },
+      {
+        name: "GMP gap assessments & mock audits",
+        detail: "Good Manufacturing Practice gap assessments compare current practice against the applicable standard — surfacing a gap before a real inspection does.",
+      },
+      {
+        name: "SOP development & document control",
+        detail: "Standard Operating Procedures are the written instructions that make a process repeatable and auditable. Document control is what keeps them current, versioned, and traceable.",
+      },
+      {
+        name: "CAPA & deviation management",
+        detail: "Corrective and Preventive Action (CAPA) is the formal process for investigating a deviation from an expected result and preventing it from recurring.",
+      },
+    ],
+  },
+  {
+    n: "03",
+    name: "Digital & Technology",
+    tagline: "Purpose-built platforms that digitize compliance and connect you to regulatory systems.",
+    items: [
+      {
+        name: "QMS & LIMS platform deployment",
+        detail: "A Laboratory Information Management System (LIMS) manages lab samples, test results, and records. Deployed alongside a QMS, it connects quality processes to the data that supports them — see our own platform, GxP Console.",
+      },
+      {
+        name: "FDA system integration & data connectivity",
+        detail: "Connecting internal systems to a regulator's digital infrastructure so data moves between them directly, rather than through manual re-entry.",
+      },
+      {
+        name: "Inventory, expiry & traceability systems",
+        detail: "Tracking stock levels, expiry dates, and chain of custody for pharmaceutical products as they move through distribution.",
+      },
+      {
+        name: "Custom pharma software development",
+        detail: "Software built for a specific pharmaceutical or healthcare workflow, rather than adapted from a generic template.",
+      },
+    ],
+  },
+  {
+    n: "04",
+    name: "Safety & Trials",
+    tagline: "Comprehensive support across clinical development and post-market safety.",
+    items: [
+      {
+        name: "Clinical trial operations & TMF management",
+        detail: "A Trial Master File (TMF) is the structured set of documents that demonstrates a clinical trial was conducted according to protocol and applicable regulation.",
+      },
+      {
+        name: "Pharmacovigilance & adverse event reporting",
+        detail: "Pharmacovigilance is the ongoing monitoring of a medicine's effects after approval, including the reporting of adverse events as they occur.",
+      },
+      {
+        name: "Signal detection & risk management",
+        detail: "A safety signal is new information suggesting a possible link between a medicine and an adverse outcome. Detecting it early narrows the response a company needs to take.",
+      },
+      {
+        name: "Periodic safety update reports (PSURs)",
+        detail: "A PSUR is a scheduled report summarizing a medicine's safety data over a defined period, submitted to regulators as part of ongoing post-market surveillance.",
+      },
+    ],
+  },
+];
 ---
-<Layout title="Services" description="Advisory & Strategy, Quality Systems, Digital & Technology, and Safety & Trials — Numeric Technologies' four service pillars.">
-  <section class="section">
-    <div class="wrap prose">
+<Layout
+  title="Services"
+  description="Advisory & Strategy, Quality Systems, Digital & Technology, and Safety & Trials — Numeric Technologies' four service pillars, in detail."
+>
+  <section class="section services-hero">
+    <div class="wrap">
       <h1>Services</h1>
-      <p>This page is being built next — the four pillars as substantial sections with real detail, not the source PDF's bullets reformatted.</p>
-      <p><a class="text-link" href="/">← Back home</a></p>
+      <p class="prose lead">
+        Four pillars, spanning the regulatory, quality, technology and
+        safety work pharmaceutical and healthcare organizations need to
+        operate in Ghana.
+      </p>
+    </div>
+  </section>
+
+  {pillars.map((pillar) => (
+    <section class="section pillar-section" id={pillar.name.toLowerCase().replace(/[^a-z]+/g, "-")}>
+      <div class="wrap">
+        <div class="pillar-head">
+          <span class="pillar-n" aria-hidden="true">{pillar.n}</span>
+          <div>
+            <h2>{pillar.name}</h2>
+            <p class="prose tagline">{pillar.tagline}</p>
+          </div>
+        </div>
+        <div class="capability-grid">
+          {pillar.items.map((item) => (
+            <div class="capability">
+              <h3>{item.name}</h3>
+              <p>{item.detail}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <p class="prose">
+        Looking for the platform itself, not the services around it? See <a class="text-link" href="/platform">GxP Console</a>.
+      </p>
     </div>
   </section>
 </Layout>
+
+<style>
+  .services-hero h1 { font-size: var(--text-3xl); margin-bottom: var(--space-4); }
+  .lead { font-size: var(--text-md); color: var(--color-text-muted); }
+
+  .pillar-head {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: var(--space-4);
+    align-items: baseline;
+    padding-bottom: var(--space-8);
+    border-bottom: 1px solid var(--color-rule);
+    margin-bottom: var(--space-10);
+  }
+  .pillar-n {
+    font-family: var(--font-display);
+    font-weight: var(--weight-black);
+    font-size: var(--text-lg);
+    color: var(--color-accent);
+  }
+  .pillar-head h2 { font-size: var(--text-2xl); margin-bottom: var(--space-3); }
+  .pillar-head .tagline { font-size: var(--text-md); color: var(--color-text-muted); max-width: 46ch; }
+
+  .capability-grid {
+    display: grid;
+    gap: var(--space-8) var(--space-10);
+  }
+  @media (min-width: 780px) {
+    .capability-grid { grid-template-columns: 1fr 1fr; }
+  }
+  .capability h3 { font-size: var(--text-base); font-weight: var(--weight-bold); margin-bottom: var(--space-2); }
+  .capability p { color: var(--color-text-muted); max-width: 46ch; }
+</style>
