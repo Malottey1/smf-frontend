@@ -1,0 +1,280 @@
+<!doctype html>
+<title>Identity Concepts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Source+Sans+3:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#FAF8F3;
+    --paper-raised:#F3EFE6;
+    --ink:#1A1815;
+    --ink-soft:#5B564E;
+    --rule:#DAD3C6;
+    --slate:#3F4C54;
+    --slate-tint:#E9EDEE;
+    --pass:#2F5C3F;
+    --fail:#8C3B2A;
+    --a-deep:#241C4A; --a-bright:#C9962B; --a-neutral:#F6F1E7; --a-ink:#1A1613;
+    --b-deep:#1E3A2F; --b-bright:#C15A2E; --b-neutral:#F5EEE4; --b-ink:#1C1815;
+    --c-deep:#3B2142; --c-bright:#B8862B; --c-neutral:#F4EFE6; --c-ink:#1B1717;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#171613; --paper-raised:#1F1D19; --ink:#F2EFE8; --ink-soft:#B7B0A2; --rule:#3A362E; --slate-tint:#232B2D;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#171613; --paper-raised:#1F1D19; --ink:#F2EFE8; --ink-soft:#B7B0A2; --rule:#3A362E; --slate-tint:#232B2D;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Source Sans 3",-apple-system,"Segoe UI",sans-serif;
+    padding:0 20px; padding-block:48px 96px;
+  }
+  .wrap{max-width:1040px; margin:0 auto;}
+  h1,h2,h3{font-family:"Archivo","Segoe UI",sans-serif; font-weight:900; letter-spacing:-0.01em; text-wrap:balance; margin:0;}
+  .kicker{font-size:0.78rem; font-weight:600; color:var(--ink-soft); letter-spacing:0.06em; margin:0 0 10px;}
+  header.top{margin-bottom:56px;}
+  header.top h1{font-size:clamp(1.9rem,4.4vw,2.9rem); line-height:1.08; max-width:22ch;}
+  header.top p{max-width:62ch; color:var(--ink-soft); font-size:1.02rem; line-height:1.55; margin:18px 0 0;}
+  hr.rule{border:none; border-top:1px solid var(--rule); margin:44px 0;}
+  section > h2{font-size:1.5rem; margin-bottom:6px;}
+  section > .lede{color:var(--ink-soft); max-width:58ch; line-height:1.5; margin:0 0 28px; font-size:0.98rem;}
+
+  /* ---- monogram concepts ---- */
+  .concepts{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  @media (max-width:820px){ .concepts{grid-template-columns:1fr;} }
+  .concept{border:1px solid var(--rule); background:var(--paper-raised);}
+  .concept .label{padding:16px 18px 0;}
+  .concept .label .letter{font-family:"Archivo",sans-serif; font-weight:900; font-size:0.72rem; letter-spacing:0.08em; color:var(--slate); display:block; margin-bottom:2px;}
+  .concept .label h3{font-size:1.08rem;}
+  .concept .reasoning{padding:10px 18px 18px; font-size:0.92rem; line-height:1.5; color:var(--ink-soft);}
+  .swatch-big{height:180px; display:flex; align-items:center; justify-content:center; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);}
+  .swatch-big svg{width:88px; height:88px; color:var(--ink);}
+  .row-mini{display:flex; align-items:stretch;}
+  .tile{flex:1; display:flex; align-items:center; justify-content:center; padding:14px 0; font-size:0.68rem; color:var(--ink-soft); flex-direction:column; gap:8px;}
+  .tile + .tile{border-left:1px solid var(--rule);}
+  .tile svg{color:var(--ink); width:22px; height:22px;}
+  .tile.dark{background:var(--ink); color:var(--paper);}
+  .tile.dark svg{color:var(--paper);}
+  .favicon-strip{display:flex; gap:6px; align-items:center;}
+  .favicon-strip svg{width:14px; height:14px;}
+  .favicon-strip svg:nth-child(2){width:18px; height:18px;}
+  .favicon-strip svg:nth-child(3){width:24px; height:24px;}
+
+  /* ---- palette ---- */
+  .palettes{display:flex; flex-direction:column; gap:36px;}
+  .palette{border:1px solid var(--rule);}
+  .palette-head{display:flex; justify-content:space-between; align-items:baseline; padding:18px 20px 0; flex-wrap:wrap; gap:8px;}
+  .palette-head h3{font-size:1.12rem;}
+  .palette-head .hint{font-size:0.82rem; color:var(--ink-soft);}
+  .swatches{display:grid; grid-template-columns:repeat(4,1fr); margin:16px 20px 0; border:1px solid var(--rule);}
+  .sw{padding:20px 12px 12px; min-height:88px; display:flex; flex-direction:column; justify-content:flex-end;}
+  .sw + .sw{border-left:1px solid var(--rule);}
+  .sw .name{font-size:0.68rem; letter-spacing:0.04em; font-weight:600;}
+  .sw .hex{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.72rem; opacity:0.85;}
+
+  table.contrast{width:calc(100% - 40px); margin:16px 20px 0; border-collapse:collapse; font-size:0.82rem;}
+  table.contrast caption{text-align:left; font-size:0.72rem; color:var(--ink-soft); margin-bottom:6px; letter-spacing:0.03em;}
+  table.contrast th, table.contrast td{text-align:left; padding:7px 10px; border-bottom:1px solid var(--rule);}
+  table.contrast th{color:var(--ink-soft); font-weight:600; font-size:0.72rem; letter-spacing:0.03em;}
+  table.contrast td.ratio{font-variant-numeric:tabular-nums; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+  .verdict{font-size:0.72rem; padding:2px 7px; border:1px solid currentColor;}
+  .verdict.pass{color:var(--pass);}
+  .verdict.fail{color:var(--fail);}
+
+  .mock{margin:18px 20px 20px; border:1px solid var(--rule);}
+  .mock-nav{display:flex; align-items:center; justify-content:space-between; padding:10px 16px; font-size:0.74rem; font-weight:600; letter-spacing:0.02em;}
+  .mock-nav .items{display:flex; gap:16px; font-weight:500; opacity:0.85;}
+  .mock-body{padding:26px 20px 24px;}
+  .mock-body .quote{font-family:"Archivo",sans-serif; font-weight:700; font-size:1.2rem; line-height:1.25; max-width:30ch; margin:0 0 14px;}
+  .mock-body .source{font-size:0.72rem; opacity:0.7; margin:0 0 18px;}
+  .mock-cta{display:inline-block; font-size:0.78rem; font-weight:600; padding:8px 16px; border:1.5px solid currentColor;}
+  .mock-mono{width:20px; height:20px;}
+
+  footer.notes{margin-top:52px; font-size:0.85rem; color:var(--ink-soft); line-height:1.6; max-width:64ch;}
+  footer.notes h4{font-family:"Archivo",sans-serif; font-size:0.78rem; letter-spacing:0.04em; color:var(--ink); margin:0 0 6px;}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="kicker">NUMERIC TECHNOLOGIES — IDENTITY REVIEW</p>
+    <h1>Three monogram concepts, three palette directions</h1>
+    <p>For sign-off before any page of the corporate site is built. Monogram source files live at <code>packages/brand-corporate/concepts/</code>; palette hex values are verified against WCAG&nbsp;AA below, not assumed.</p>
+  </header>
+
+  <section>
+    <h2>Monogram concepts</h2>
+    <p class="lede">Each is built on a 32-unit grid, angles limited to 90°/45°, one consistent stroke weight per mark. Shown at full size, at favicon scale (14 / 18 / 24px), and reversed on a dark ground.</p>
+    <div class="concepts">
+
+      <article class="concept">
+        <div class="label"><span class="letter">CONCEPT A</span><h3>Checked N</h3></div>
+        <div class="swatch-big">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M4,4 L10,4 L10,28 L4,28 Z M22,4 L28,4 L28,28 L22,28 Z M4,4 L10,4 L28,28 L22,28 Z M14,15 L19,17 L15,19 Z"/></svg>
+        </div>
+        <div class="row-mini">
+          <div class="tile"><div class="favicon-strip">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M4,4 L10,4 L10,28 L4,28 Z M22,4 L28,4 L28,28 L22,28 Z M4,4 L10,4 L28,28 L22,28 Z M14,15 L19,17 L15,19 Z"/></svg>
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M4,4 L10,4 L10,28 L4,28 Z M22,4 L28,4 L28,28 L22,28 Z M4,4 L10,4 L28,28 L22,28 Z M14,15 L19,17 L15,19 Z"/></svg>
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M4,4 L10,4 L10,28 L4,28 Z M22,4 L28,4 L28,28 L22,28 Z M4,4 L10,4 L28,28 L22,28 Z M14,15 L19,17 L15,19 Z"/></svg>
+          </div><span>14–24px</span></div>
+          <div class="tile dark">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M4,4 L10,4 L10,28 L4,28 Z M22,4 L28,4 L28,28 L22,28 Z M4,4 L10,4 L28,28 L22,28 Z M14,15 L19,17 L15,19 Z"/></svg>
+            <span>reversed</span>
+          </div>
+        </div>
+        <p class="reasoning">A geometric N with one facet cut into the diagonal — a single angled notch standing in for a checkpoint, without literally drawing a checkmark icon.</p>
+      </article>
+
+      <article class="concept">
+        <div class="label"><span class="letter">CONCEPT B</span><h3>Joined Forms</h3></div>
+        <div class="swatch-big">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M4,4 L10,4 L10,22 L22,22 L22,28 L4,28 Z"/><path fill="currentColor" d="M10,4 L28,4 L28,28 L22,28 L22,10 L10,10 Z"/></svg>
+        </div>
+        <div class="row-mini">
+          <div class="tile"><div class="favicon-strip">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M4,4 L10,4 L10,22 L22,22 L22,28 L4,28 Z"/><path fill="currentColor" d="M10,4 L28,4 L28,28 L22,28 L22,10 L10,10 Z"/></svg>
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M4,4 L10,4 L10,22 L22,22 L22,28 L4,28 Z"/><path fill="currentColor" d="M10,4 L28,4 L28,28 L22,28 L22,10 L10,10 Z"/></svg>
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M4,4 L10,4 L10,22 L22,22 L22,28 L4,28 Z"/><path fill="currentColor" d="M10,4 L28,4 L28,28 L22,28 L22,10 L10,10 Z"/></svg>
+          </div><span>14–24px</span></div>
+          <div class="tile dark">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M4,4 L10,4 L10,22 L22,22 L22,28 L4,28 Z"/><path fill="currentColor" d="M10,4 L28,4 L28,28 L22,28 L22,10 L10,10 Z"/></svg>
+            <span>reversed</span>
+          </div>
+        </div>
+        <p class="reasoning">Two independent L-brackets, not touching, that read as one mark only because the eye closes the central gap — the clearest visual argument for "two systems meeting," and the one built to hold a genuine two-colour split (each bracket its own tone).</p>
+      </article>
+
+      <article class="concept">
+        <div class="label"><span class="letter">CONCEPT C</span><h3>Modular N</h3></div>
+        <div class="swatch-big">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="currentColor"><rect x="4" y="4" width="3" height="24"/><rect x="25" y="4" width="3" height="24"/><rect x="7" y="7" width="3" height="3"/><rect x="10" y="10" width="3" height="3"/><rect x="13" y="13" width="3" height="3"/><rect x="16" y="16" width="3" height="3"/><rect x="19" y="19" width="3" height="3"/><rect x="22" y="22" width="3" height="3"/></g></svg>
+        </div>
+        <div class="row-mini">
+          <div class="tile"><div class="favicon-strip">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="currentColor"><rect x="4" y="4" width="3" height="24"/><rect x="25" y="4" width="3" height="24"/><rect x="7" y="7" width="3" height="3"/><rect x="10" y="10" width="3" height="3"/><rect x="13" y="13" width="3" height="3"/><rect x="16" y="16" width="3" height="3"/><rect x="19" y="19" width="3" height="3"/><rect x="22" y="22" width="3" height="3"/></g></svg>
+            <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="currentColor"><rect x="4" y="4" width="3" height="24"/><rect x="25" y="4" width="3" height="24"/><rect x="7" y="7" width="3" height="3"/><rect x="10" y="10" width="3" height="3"/><rect x="13" y="13" width="3" height="3"/><rect x="16" y="16" width="3" height="3"/><rect x="19" y="19" width="3" height="3"/><rect x="22" y="22" width="3" height="3"/></g></svg>
+            <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="currentColor"><rect x="4" y="4" width="3" height="24"/><rect x="25" y="4" width="3" height="24"/><rect x="7" y="7" width="3" height="3"/><rect x="10" y="10" width="3" height="3"/><rect x="13" y="13" width="3" height="3"/><rect x="16" y="16" width="3" height="3"/><rect x="19" y="19" width="3" height="3"/><rect x="22" y="22" width="3" height="3"/></g></svg>
+          </div><span>14–24px</span></div>
+          <div class="tile dark">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="currentColor"><rect x="4" y="4" width="3" height="24"/><rect x="25" y="4" width="3" height="24"/><rect x="7" y="7" width="3" height="3"/><rect x="10" y="10" width="3" height="3"/><rect x="13" y="13" width="3" height="3"/><rect x="16" y="16" width="3" height="3"/><rect x="19" y="19" width="3" height="3"/><rect x="22" y="22" width="3" height="3"/></g></svg>
+            <span>reversed</span>
+          </div>
+        </div>
+        <p class="reasoning">A pixel-grid N — discrete square modules rather than continuous strokes — the most literal expression of "systematic, modular construction," and the one most likely to read as software rather than as a services firm.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <h2>Palette directions</h2>
+    <p class="lede">Structure only, not Pfizer's hues: one deep authoritative tone, one warm energetic tone used structurally (never as small body text), a warm neutral, a near-black. Every pairing below is measured, not eyeballed — ratios use the WCAG relative-luminance formula.</p>
+    <div class="palettes">
+
+      <div class="palette">
+        <div class="palette-head"><h3>A — Indigo &amp; Gold</h3><span class="hint">deep indigo · warm gold</span></div>
+        <div class="swatches">
+          <div class="sw" style="background:var(--a-deep); color:#fff;"><span class="name">DEEP</span><span class="hex">#241C4A</span></div>
+          <div class="sw" style="background:var(--a-bright); color:#241C4A;"><span class="name">BRIGHT</span><span class="hex">#C9962B</span></div>
+          <div class="sw" style="background:var(--a-neutral); color:#1A1613;"><span class="name">NEUTRAL</span><span class="hex">#F6F1E7</span></div>
+          <div class="sw" style="background:var(--a-ink); color:#F6F1E7;"><span class="name">INK</span><span class="hex">#1A1613</span></div>
+        </div>
+        <table class="contrast">
+          <caption>WCAG AA — key pairings</caption>
+          <thead><tr><th>Pairing</th><th>Ratio</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td>Deep on white</td><td class="ratio">15.7:1</td><td><span class="verdict pass">AAA</span></td></tr>
+            <tr><td>Ink on neutral (body text)</td><td class="ratio">16.0:1</td><td><span class="verdict pass">AAA</span></td></tr>
+            <tr><td>Bright on white (small text)</td><td class="ratio">2.7:1</td><td><span class="verdict fail">fail — large/graphic only</span></td></tr>
+            <tr><td>Ink on bright</td><td class="ratio">6.8:1</td><td><span class="verdict pass">AA</span></td></tr>
+          </tbody>
+        </table>
+        <div class="mock">
+          <div class="mock-nav" style="background:var(--a-neutral); color:var(--a-ink); border-bottom:1px solid var(--a-deep);">
+            <svg class="mock-mono" viewBox="0 0 32 32" aria-hidden="true"><path fill="var(--a-deep)" fill-rule="evenodd" d="M4,4 L10,4 L10,28 L4,28 Z M22,4 L28,4 L28,28 L22,28 Z M4,4 L10,4 L28,28 L22,28 Z M14,15 L19,17 L15,19 Z"/></svg>
+            <span class="items"><span>Services</span><span>Platform</span><span>Insights</span></span>
+          </div>
+          <div class="mock-body" style="background:#fff; color:var(--a-deep);">
+            <p class="quote">"Creative, technical solutions tailored to unique business needs."</p>
+            <p class="source">— mission statement, verbatim, for layout demonstration only</p>
+            <span class="mock-cta" style="border-color:var(--a-bright); color:var(--a-deep);">Read the mission</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="palette">
+        <div class="palette-head"><h3>B — Forest &amp; Terracotta</h3><span class="hint">deep forest green · burnt terracotta</span></div>
+        <div class="swatches">
+          <div class="sw" style="background:var(--b-deep); color:#fff;"><span class="name">DEEP</span><span class="hex">#1E3A2F</span></div>
+          <div class="sw" style="background:var(--b-bright); color:#1E3A2F;"><span class="name">BRIGHT</span><span class="hex">#C15A2E</span></div>
+          <div class="sw" style="background:var(--b-neutral); color:#1C1815;"><span class="name">NEUTRAL</span><span class="hex">#F5EEE4</span></div>
+          <div class="sw" style="background:var(--b-ink); color:#F5EEE4;"><span class="name">INK</span><span class="hex">#1C1815</span></div>
+        </div>
+        <table class="contrast">
+          <caption>WCAG AA — key pairings</caption>
+          <thead><tr><th>Pairing</th><th>Ratio</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td>Deep on white</td><td class="ratio">12.3:1</td><td><span class="verdict pass">AAA</span></td></tr>
+            <tr><td>Ink on neutral (body text)</td><td class="ratio">15.3:1</td><td><span class="verdict pass">AAA</span></td></tr>
+            <tr><td>Bright on white (small text)</td><td class="ratio">4.4:1</td><td><span class="verdict pass">AA — large text/UI</span></td></tr>
+            <tr><td>Bright on deep</td><td class="ratio">2.8:1</td><td><span class="verdict fail">fail — don't pair</span></td></tr>
+          </tbody>
+        </table>
+        <div class="mock">
+          <div class="mock-nav" style="background:var(--b-neutral); color:var(--b-ink); border-bottom:1px solid var(--b-deep);">
+            <svg class="mock-mono" viewBox="0 0 32 32" aria-hidden="true"><path fill="var(--b-deep)" fill-rule="evenodd" d="M4,4 L10,4 L10,28 L4,28 Z M22,4 L28,4 L28,28 L22,28 Z M4,4 L10,4 L28,28 L22,28 Z M14,15 L19,17 L15,19 Z"/></svg>
+            <span class="items"><span>Services</span><span>Platform</span><span>Insights</span></span>
+          </div>
+          <div class="mock-body" style="background:#fff; color:var(--b-deep);">
+            <p class="quote">"Creative, technical solutions tailored to unique business needs."</p>
+            <p class="source">— mission statement, verbatim, for layout demonstration only</p>
+            <span class="mock-cta" style="border-color:var(--b-bright); color:var(--b-deep);">Read the mission</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="palette">
+        <div class="palette-head"><h3>C — Aubergine &amp; Ochre</h3><span class="hint">deep aubergine · mustard ochre</span></div>
+        <div class="swatches">
+          <div class="sw" style="background:var(--c-deep); color:#fff;"><span class="name">DEEP</span><span class="hex">#3B2142</span></div>
+          <div class="sw" style="background:var(--c-bright); color:#3B2142;"><span class="name">BRIGHT</span><span class="hex">#B8862B</span></div>
+          <div class="sw" style="background:var(--c-neutral); color:#1B1717;"><span class="name">NEUTRAL</span><span class="hex">#F4EFE6</span></div>
+          <div class="sw" style="background:var(--c-ink); color:#F4EFE6;"><span class="name">INK</span><span class="hex">#1B1717</span></div>
+        </div>
+        <table class="contrast">
+          <caption>WCAG AA — key pairings</caption>
+          <thead><tr><th>Pairing</th><th>Ratio</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td>Deep on white</td><td class="ratio">14.2:1</td><td><span class="verdict pass">AAA</span></td></tr>
+            <tr><td>Ink on neutral (body text)</td><td class="ratio">15.5:1</td><td><span class="verdict pass">AAA</span></td></tr>
+            <tr><td>Bright on white (small text)</td><td class="ratio">3.2:1</td><td><span class="verdict fail">fail — large/graphic only</span></td></tr>
+            <tr><td>Ink on bright</td><td class="ratio">5.5:1</td><td><span class="verdict pass">AA</span></td></tr>
+          </tbody>
+        </table>
+        <div class="mock">
+          <div class="mock-nav" style="background:var(--c-neutral); color:var(--c-ink); border-bottom:1px solid var(--c-deep);">
+            <svg class="mock-mono" viewBox="0 0 32 32" aria-hidden="true"><path fill="var(--c-deep)" fill-rule="evenodd" d="M4,4 L10,4 L10,28 L4,28 Z M22,4 L28,4 L28,28 L22,28 Z M4,4 L10,4 L28,28 L22,28 Z M14,15 L19,17 L15,19 Z"/></svg>
+            <span class="items"><span>Services</span><span>Platform</span><span>Insights</span></span>
+          </div>
+          <div class="mock-body" style="background:#fff; color:var(--c-deep);">
+            <p class="quote">"Creative, technical solutions tailored to unique business needs."</p>
+            <p class="source">— mission statement, verbatim, for layout demonstration only</p>
+            <span class="mock-cta" style="border-color:var(--c-bright); color:var(--c-deep);">Read the mission</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="notes">
+    <h4>Reading the tables</h4>
+    <p>"Bright on white" failing AA in all three directions is expected and matches the brief: the energetic tone is for headers, rules and small structural accents — never small body copy on a white ground. Every direction's deep/ink/neutral combination clears AAA comfortably, which is the pairing that carries all actual reading.</p>
+    <p>Typefaces used on this page (Archivo for display, Source&nbsp;Sans&nbsp;3 for body) are the two candidates named in the brief, shown here at working size rather than described — both will be self-hosted as woff2 in the real build, this page only borrows Google Fonts for review speed.</p>
+  </footer>
+</div>
