@@ -2,7 +2,7 @@
 <title>Numeric Technologies Brand Sheet</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Source+Sans+3:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Public+Sans:wght@400;500;600;700&display=swap">
 <style>
   :root{
     --deep:#241C4A; --bright:#C9962B; --neutral:#F6F1E7; --ink:#1A1613;
@@ -14,9 +14,9 @@
   }
   :root[data-theme="dark"]{ --paper:#171613; --paper-raised:#1F1D19; --rule:#3A362E; }
   *{box-sizing:border-box;}
-  body{margin:0; background:var(--paper); color:var(--ink); font-family:"Source Sans 3",-apple-system,sans-serif; padding:0 20px; padding-block:48px 96px;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:"Public Sans",-apple-system,sans-serif; padding:0 20px; padding-block:48px 96px;}
   .wrap{max-width:980px; margin:0 auto;}
-  h1,h2,h3{font-family:"Archivo",sans-serif; font-weight:900; letter-spacing:-0.01em; text-wrap:balance; margin:0;}
+  h1,h2,h3{font-family:"Familjen Grotesk",sans-serif; font-weight:700; letter-spacing:-0.01em; text-wrap:balance; margin:0;}
   header.top{margin-bottom:8px;}
   header.top .kicker{font-size:0.78rem; font-weight:600; color:var(--ink-soft); letter-spacing:0.06em; margin:0 0 8px;}
   header.top h1{font-size:clamp(1.7rem,4vw,2.4rem);}
@@ -62,7 +62,7 @@
   table.scale{width:100%; border-collapse:collapse; font-size:0.9rem; margin-top:8px;}
   table.scale th,table.scale td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--rule); vertical-align:baseline;}
   table.scale th{color:var(--ink-soft); font-weight:600; font-size:0.72rem; letter-spacing:0.03em;}
-  table.scale td.sample{font-family:"Archivo",sans-serif; font-weight:900;}
+  table.scale td.sample{font-family:"Familjen Grotesk",sans-serif; font-weight:700;}
   table.scale td.token{font-family:ui-monospace,Menlo,monospace; font-size:0.78rem; color:var(--ink-soft);}
 
   .rules-list{display:grid; grid-template-columns:1fr 1fr; gap:0 40px; margin-top:8px;}
@@ -170,7 +170,7 @@
 
   <section>
     <h2>Type scale</h2>
-    <p style="font-size:0.9rem; color:var(--ink-soft); margin:0 0 4px;">Archivo (display, self-hosted variable, weights 500–900) + Source Sans 3 (body, self-hosted variable, weights 400–700). Hierarchy comes from size and weight — never colour.</p>
+    <p style="font-size:0.9rem; color:var(--ink-soft); margin:0 0 4px;">Familjen Grotesk (display, self-hosted variable, weights 400–700 — this family has no black/900 instance, so 700 is the ceiling) + Public Sans (body, self-hosted variable, weights 100–900). Hierarchy comes from size and weight — never colour. The wordmark itself stays set in Archivo Black, unchanged — see "Primary lockup" above.</p>
     <table class="scale">
       <thead><tr><th>Token</th><th>Size</th><th>Use</th><th>Sample</th></tr></thead>
       <tbody>
@@ -179,10 +179,10 @@
         <tr><td class="token">--text-2xl</td><td>36px</td><td>Page heading / mobile hero</td><td class="sample" style="font-size:1.5rem;">Aa</td></tr>
         <tr><td class="token">--text-xl</td><td>28px</td><td>Section heading</td><td class="sample" style="font-size:1.2rem;">Aa</td></tr>
         <tr><td class="token">--text-lg</td><td>22px</td><td>Card / subsection heading</td><td class="sample" style="font-size:1rem;">Aa</td></tr>
-        <tr><td class="token">--text-md</td><td>18px</td><td>Lead paragraph</td><td style="font-family:'Source Sans 3'; font-size:0.9rem;">Aa</td></tr>
-        <tr><td class="token">--text-base</td><td>16px</td><td>Body</td><td style="font-family:'Source Sans 3'; font-size:0.85rem;">Aa</td></tr>
-        <tr><td class="token">--text-sm</td><td>14px</td><td>Small UI, nav</td><td style="font-family:'Source Sans 3'; font-size:0.78rem;">Aa</td></tr>
-        <tr><td class="token">--text-xs</td><td>12px</td><td>Captions, credits, legal</td><td style="font-family:'Source Sans 3'; font-size:0.7rem;">Aa</td></tr>
+        <tr><td class="token">--text-md</td><td>18px</td><td>Lead paragraph</td><td style="font-family:'Public Sans'; font-size:0.9rem;">Aa</td></tr>
+        <tr><td class="token">--text-base</td><td>16px</td><td>Body</td><td style="font-family:'Public Sans'; font-size:0.85rem;">Aa</td></tr>
+        <tr><td class="token">--text-sm</td><td>14px</td><td>Small UI, nav</td><td style="font-family:'Public Sans'; font-size:0.78rem;">Aa</td></tr>
+        <tr><td class="token">--text-xs</td><td>12px</td><td>Captions, credits, legal</td><td style="font-family:'Public Sans'; font-size:0.7rem;">Aa</td></tr>
       </tbody>
     </table>
   </section>
