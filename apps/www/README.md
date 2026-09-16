@@ -19,9 +19,17 @@ documents) — nothing on the site states a fact that isn't there.
 ## Status
 
 All six pages are built: Home, Services, Platform, About, Insights
-(content collection, two placeholder posts), Contact. Nothing 404s.
-Remaining work is entirely the `[PLACEHOLDER]` items below — content
-Numeric needs to supply, not pages left to build.
+(content collection, two posts), Contact. Every page carries at least
+one photo, and every page has a horizontal image hero at the top except
+Home (which has its own two-photo layout — see `src/pages/index.astro`).
+
+**The live site shows no `[PLACEHOLDER]` text, tags, or notes.** Every
+gap the source documents don't fill is instead either quietly omitted
+(no "Address: [PLACEHOLDER]" line — the field just isn't shown) or
+worded as ordinary, un-alarming product copy ("Registration isn't open
+yet — check back soon."). The gaps themselves are fully tracked, just
+only here and in `LAUNCH-CHECKLIST.md` — a developer/reviewer document,
+not something a site visitor sees.
 
 ## Commands (from repo root)
 
@@ -31,45 +39,29 @@ pnpm --filter www build     # → apps/www/dist
 pnpm --filter www preview
 ```
 
-## [PLACEHOLDER] inventory
+## What's missing (dev-facing only — see LAUNCH-CHECKLIST.md)
 
-Everything below is a gap the source documents don't fill. Nothing has
-been invented to paper over it — see `LAUNCH-CHECKLIST.md` for the full
-list mapped to what it unblocks.
-
-| Where | What's missing |
-|---|---|
-| Footer, every page | Registered company name/number, address |
-| Home `/`, Contact `/contact` | Address, phone, email |
-| `/about` | History, team members/bios/headshots, certifications & partnerships |
-| `/platform` | What more can be said publicly about GxP Console, and when; register-interest form isn't connected |
-| `/insights` | Both posts are placeholders — real regulatory-intelligence writing, not filled-in text |
-| `/contact` | Enquiry form fields are built but disabled — not connected, and delivery target isn't decided |
-| `<head>` OG image | Using a generated on-brand placeholder (`public/og-default.png`, built from the real logo) until there's real photography worth using instead |
-| `astro.config.mjs` `site` | Placeholder domain — set the real one before launch |
+| Where | What's missing | How the live page handles it |
+|---|---|---|
+| Footer, every page | Registered company name/number, address | Just shows "© {year} Numeric Technologies." — no unresolved line |
+| Home, Contact | Address, phone, email | Home links to Contact; Contact shows only the enquiry form |
+| `/about` | History, certifications & partnerships | Sections aren't on the page at all — see `about.astro`'s frontmatter comment |
+| `/about` "Team" | Real team members, bios, headshots | Shows a stock photo under the heading, no names/roles attached — see `CREDITS.md`, this one's a judgment call worth re-reading |
+| `/platform` | What more can be said about GxP Console; register-interest delivery | Panel just states the one confirmed fact; form says "not open yet" |
+| `/insights` | Real regulatory-intelligence writing | Both posts are short but 100% real quotes from source material — `placeholder: true` in frontmatter tracks this invisibly |
+| `/contact` | Enquiry form delivery target | Form is built to the real field set, disabled, with a plain "not open yet" note |
+| `astro.config.mjs` `site` | Placeholder domain | — |
 
 ## Photography
 
-Two real stock photos are in use (on instruction to prefer that over a
-placeholder) — see `CREDITS.md` for source, photographer, licence and
-why each was picked:
+Every page has real stock photography now — see `CREDITS.md` for
+source, photographer, licence, and (importantly) what was rejected and
+why. Two things worth knowing without opening that file:
 
-1. **Home hero** — a scientist working in a laboratory in Kinshasa, DR
-   Congo. Real, candid, non-staged. Not Ghana — the alt text and copy
-   don't claim it is.
-2. **Home "The moment for Ghana" section** — a pharmacist and customer
-   at a pharmacy counter in Lagos, Nigeria. Real, but the most
-   styled/staged of the two — the honest trade-off is logged in
-   `CREDITS.md`.
-
-Remaining placeholder:
-
-3. **About "Team," 16:9** — deliberately still a placeholder even
-   though the two above are now real photos. A stock photo of
-   unrelated people captioned as "the team" would misrepresent who
-   they are, which isn't the same category of problem as generic
-   workplace photography. Needs actual photos of the actual team.
-
-Services and Platform carry no image placeholders — they're dense,
-informational pages where forcing an empty block wouldn't earn its
-space.
+1. **Nothing is actually Ghanaian.** The closest available real,
+   non-generic candidates were Nigerian, Kenyan, and Congolese. Every
+   alt text and caption says the real location; none imply Ghana.
+2. **About's "Team" photo is not Numeric's team** — it's the one place
+   on the site where a stock photo risks implying something specific
+   and false (that these are named employees). Read the note in
+   `CREDITS.md` before treating this as a template for other sections.

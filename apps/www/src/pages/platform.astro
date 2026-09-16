@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Monogram from "../components/Monogram.astro";
+import PageHero from "../components/PageHero.astro";
+import nairobiDeveloper from "../assets/images/nairobi-developer.jpg";
 
 // GxP Console's own palette + IBM Plex Sans, copied verbatim from
 // apps/smf-frontend/src/design-system/tokens.css — real values from the
@@ -13,6 +15,11 @@ import Monogram from "../components/Monogram.astro";
   title="Platform"
   description="GxP Console — Numeric Technologies' Quality Management System and Laboratory Information Management System platform, in development."
 >
+  <PageHero
+    image={nairobiDeveloper}
+    alt="A developer working at a multi-monitor desk setup, writing code."
+  />
+
   <section class="section platform-hero">
     <div class="wrap">
       <h1>Platform</h1>
@@ -47,12 +54,6 @@ import Monogram from "../components/Monogram.astro";
           system, designed to connect to the regulator's own digital
           infrastructure rather than sit apart from it.
         </p>
-        <p class="panel-note">
-          [PLACEHOLDER] — what more can be said publicly about GxP
-          Console, and when, is tracked in LAUNCH-CHECKLIST.md. Nothing
-          about features, timeline, or availability is stated here beyond
-          what's above.
-        </p>
       </div>
     </div>
   </section>
@@ -73,8 +74,7 @@ import Monogram from "../components/Monogram.astro";
           <button type="submit" class="btn" disabled>Notify me</button>
         </div>
         <p id="register-note" class="form-note">
-          [PLACEHOLDER] — this form isn't connected yet. See
-          LAUNCH-CHECKLIST.md → "Where the enquiry form should deliver."
+          Registration isn't open yet — check back soon.
         </p>
       </form>
     </div>
@@ -138,14 +138,7 @@ import Monogram from "../components/Monogram.astro";
     padding: 4px 10px;
     align-self: flex-start;
   }
-  .panel-body { font-size: 1rem; line-height: 1.6; color: #c9d6e0; max-width: 56ch; margin-bottom: var(--space-6); }
-  .panel-note {
-    font-family: var(--font-body);
-    font-size: var(--text-xs);
-    color: #8fa3b3;
-    border-top: 1px solid #1d3a52;
-    padding-top: var(--space-4);
-  }
+  .panel-body { font-size: 1rem; line-height: 1.6; color: #c9d6e0; max-width: 56ch; }
 
   .register-grid { display: grid; gap: var(--space-8); }
   @media (min-width: 780px) {

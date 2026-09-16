@@ -1,6 +1,8 @@
 ---
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import PageHero from "../../components/PageHero.astro";
+import lagosPharmacy from "../../assets/images/lagos-pharmacy-counter.jpg";
 
 export async function getStaticPaths() {
   const posts = await getCollection("insights");
@@ -14,9 +16,13 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 ---
 <Layout title={post.data.title} description={post.data.description}>
+  <PageHero
+    image={lagosPharmacy}
+    alt="A pharmacist and a customer review a medicine box together at a pharmacy counter."
+  />
+
   <article class="section post">
     <div class="wrap prose">
-      {post.data.placeholder && <p class="tag">PLACEHOLDER — NOT A PUBLISHED ARTICLE</p>}
       <h1>{post.data.title}</h1>
       <time datetime={post.data.pubDate.toISOString()}>
         {post.data.pubDate.toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric" })}
@@ -30,18 +36,8 @@ const { Content } = await render(post);
 </Layout>
 
 <style>
-  .post h1 { font-size: var(--text-2xl); margin-top: var(--space-3); margin-bottom: var(--space-3); }
+  .post h1 { font-size: var(--text-2xl); margin-bottom: var(--space-3); }
   .post time { font-size: var(--text-sm); color: var(--color-text-muted); }
-  .post .tag {
-    display: inline-block;
-    font-size: 0.7rem;
-    font-weight: var(--weight-semibold);
-    letter-spacing: var(--tracking-wide);
-    color: var(--color-deep);
-    border: 1px solid var(--color-rule);
-    padding: 3px 10px;
-    margin: 0;
-  }
   .post-body {
     margin-block: var(--space-8);
     font-size: var(--text-md);

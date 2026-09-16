@@ -1,6 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import PageHero from "../../components/PageHero.astro";
+import lagosPharmacy from "../../assets/images/lagos-pharmacy-counter.jpg";
 
 const posts = (await getCollection("insights")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
@@ -10,17 +12,17 @@ const posts = (await getCollection("insights")).sort(
   title="Insights"
   description="Regulatory intelligence from Numeric Technologies."
 >
+  <PageHero
+    image={lagosPharmacy}
+    alt="A pharmacist and a customer review a medicine box together at a pharmacy counter."
+  />
+
   <section class="section insights-hero">
     <div class="wrap">
       <h1>Insights</h1>
       <p class="prose lead">
         Regulatory intelligence & policy monitoring is one of our
         Advisory & Strategy services — this is where we publish it.
-      </p>
-      <p class="prose placeholder-note">
-        <strong>[PLACEHOLDER]</strong> — every post below is a stand-in,
-        not a published article. See LAUNCH-CHECKLIST.md → "Two or three
-        Insights articles."
       </p>
     </div>
   </section>
@@ -32,10 +34,7 @@ const posts = (await getCollection("insights")).sort(
           <li class="post-row">
             <a href={`/insights/${post.id}/`}>
               <div>
-                <h2>
-                  {post.data.title}
-                  {post.data.placeholder && <span class="tag">PLACEHOLDER</span>}
-                </h2>
+                <h2>{post.data.title}</h2>
                 <p>{post.data.description}</p>
               </div>
               <time datetime={post.data.pubDate.toISOString()}>
@@ -52,8 +51,6 @@ const posts = (await getCollection("insights")).sort(
 <style>
   .insights-hero h1 { font-size: var(--text-3xl); margin-bottom: var(--space-4); }
   .lead { font-size: var(--text-md); color: var(--color-text-muted); }
-  .placeholder-note { font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-4); }
-  .placeholder-note strong { color: var(--color-text); }
 
   .post-list { border-top: 1px solid var(--color-rule); }
   .post-row { border-bottom: 1px solid var(--color-rule); }
@@ -65,16 +62,7 @@ const posts = (await getCollection("insights")).sort(
     padding-block: var(--space-8);
     text-decoration: none;
   }
-  .post-row h2 { font-size: var(--text-lg); margin-bottom: var(--space-2); display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+  .post-row h2 { font-size: var(--text-lg); margin-bottom: var(--space-2); }
   .post-row p { color: var(--color-text-muted); max-width: 52ch; }
   .post-row time { font-size: var(--text-xs); color: var(--color-text-muted); white-space: nowrap; }
-  .post-row .tag {
-    font-family: var(--font-body);
-    font-size: 0.65rem;
-    font-weight: var(--weight-semibold);
-    letter-spacing: var(--tracking-wide);
-    color: var(--color-deep);
-    border: 1px solid var(--color-rule);
-    padding: 2px 8px;
-  }
 </style>

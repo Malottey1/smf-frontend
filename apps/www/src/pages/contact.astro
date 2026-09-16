@@ -1,7 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import PageHero from "../components/PageHero.astro";
+import lagosCasualMeeting from "../assets/images/lagos-casual-meeting.jpg";
 ---
 <Layout title="Contact" description="Contact Numeric Technologies.">
+  <PageHero
+    image={lagosCasualMeeting}
+    alt="Four colleagues talking together in a bright office space."
+  />
+
   <section class="section contact-hero">
     <div class="wrap contact-layout">
       <div>
@@ -10,21 +17,6 @@ import Layout from "../layouts/Layout.astro";
           For regulatory advisory, quality systems work, or to talk
           about GxP Console, get in touch.
         </p>
-
-        <dl class="contact-facts">
-          <div>
-            <dt>Address</dt>
-            <dd>[PLACEHOLDER — see LAUNCH-CHECKLIST.md]</dd>
-          </div>
-          <div>
-            <dt>Phone</dt>
-            <dd>[PLACEHOLDER]</dd>
-          </div>
-          <div>
-            <dt>Email</dt>
-            <dd>[PLACEHOLDER]</dd>
-          </div>
-        </dl>
       </div>
 
       <form class="enquiry-form" aria-describedby="enquiry-note">
@@ -46,11 +38,7 @@ import Layout from "../layouts/Layout.astro";
         </div>
         <button type="submit" class="btn" disabled>Send enquiry</button>
         <p id="enquiry-note" class="form-note">
-          <strong>[PLACEHOLDER]</strong> — this form isn't connected to
-          anything yet. It's built to the real field set an enquiry form
-          needs; wiring it up depends on where enquiries should be
-          delivered. See LAUNCH-CHECKLIST.md → "Where the enquiry form
-          should deliver."
+          This form isn't open yet — check back soon.
         </p>
       </form>
     </div>
@@ -65,15 +53,6 @@ import Layout from "../layouts/Layout.astro";
   @media (min-width: 780px) {
     .contact-layout { grid-template-columns: 1fr 1fr; }
   }
-
-  .contact-facts { display: grid; gap: var(--space-5); border-top: 1px solid var(--color-rule); padding-top: var(--space-6); }
-  .contact-facts dt {
-    font-size: var(--text-xs);
-    letter-spacing: var(--tracking-wide);
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-  }
-  .contact-facts dd { margin: 0; font-size: var(--text-md); font-weight: var(--weight-semibold); }
 
   .enquiry-form { display: flex; flex-direction: column; gap: var(--space-5); }
   .field label {

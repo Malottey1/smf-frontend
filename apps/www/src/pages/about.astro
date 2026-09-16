@@ -1,11 +1,25 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import PlaceholderPhoto from "../components/PlaceholderPhoto.astro";
+import PageHero from "../components/PageHero.astro";
+import { Picture } from "astro:assets";
+import lagosBusinessMeeting from "../assets/images/lagos-business-meeting.jpg";
+import lagosTeamPhoto from "../assets/images/lagos-team-photo.jpg";
+
+// "History" and "Certifications & partnerships" sections are
+// intentionally not on this page — neither is in the source documents,
+// and there's no honest photo or copy substitute for a specific,
+// checkable fact like a founding date or a certification. Tracked in
+// LAUNCH-CHECKLIST.md instead of shown here as an empty labelled box.
 ---
 <Layout
   title="About"
   description="About Numeric Technologies — a Ghana-based IT solutions company for the pharmaceutical and healthcare sector."
 >
+  <PageHero
+    image={lagosBusinessMeeting}
+    alt="A team meeting around a table in a bright conference room."
+  />
+
   <section class="section about-hero">
     <div class="wrap">
       <h1>About</h1>
@@ -60,35 +74,17 @@ import PlaceholderPhoto from "../components/PlaceholderPhoto.astro";
   </section>
 
   <section class="section">
-    <div class="wrap">
-      <h2>History</h2>
-      <div class="placeholder-block">
-        <p><strong>[PLACEHOLDER]</strong> — founding date, years operating and company history aren't in the source documents. See LAUNCH-CHECKLIST.md → "Company details."</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt">
-    <div class="wrap">
+    <div class="wrap team-grid">
       <h2>Team</h2>
-      <div class="placeholder-block">
-        <p><strong>[PLACEHOLDER]</strong> — team members, roles, bios and headshots aren't in the source documents. See LAUNCH-CHECKLIST.md → "Credibility."</p>
-      </div>
-      <div class="team-photo-frame">
-        <PlaceholderPhoto
-          ratio="16/9"
-          shot="Team photography — real people, real workplace, once available. Not a stock substitute."
-        />
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="wrap">
-      <h2>Certifications &amp; partnerships</h2>
-      <div class="placeholder-block">
-        <p><strong>[PLACEHOLDER]</strong> — certifications, accreditations and partnerships aren't in the source documents. See LAUNCH-CHECKLIST.md → "Credibility."</p>
-      </div>
+      <Picture
+        src={lagosTeamPhoto}
+        alt="Three colleagues reviewing something together on a laptop."
+        widths={[400, 800, 1200]}
+        sizes="(min-width: 780px) 40rem, 100vw"
+        formats={["avif", "webp"]}
+        loading="lazy"
+        class="team-photo"
+      />
     </div>
   </section>
 </Layout>
@@ -110,15 +106,10 @@ import PlaceholderPhoto from "../components/PlaceholderPhoto.astro";
     max-width: 30ch;
   }
 
-  .placeholder-block {
-    border: 1px dashed var(--color-rule);
-    background: var(--color-bg);
-    padding: var(--space-6);
-    max-width: var(--prose-max);
+  .team-photo {
+    width: 100%;
+    max-width: 40rem;
+    height: auto;
+    border: 1px solid var(--color-rule);
   }
-  .section-alt .placeholder-block { background: var(--color-bg); }
-  .placeholder-block strong { color: var(--color-text); }
-  .placeholder-block p { color: var(--color-text-muted); font-size: var(--text-sm); }
-
-  .team-photo-frame { margin-top: var(--space-6); max-width: 40rem; }
 </style>
