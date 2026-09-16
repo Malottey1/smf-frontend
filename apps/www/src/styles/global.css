@@ -2,9 +2,10 @@
 
 /* ---- reset ---- */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; overflow-x: hidden; }
 body {
   margin: 0;
+  overflow-x: hidden;
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-body);
@@ -116,6 +117,16 @@ ul { margin: 0; padding: 0; list-style: none; }
     font-weight: var(--weight-semibold);
     color: var(--color-text);
   }
+}
+
+/* Below ~360px (small Android, iPhone SE/mini) the full wordmark next to
+   the monogram plus the "Menu" button no longer fits the viewport —
+   verified overflow, not a guess: 320px measured 335px of content.
+   Drop the wordmark and keep just the monogram, which is designed to
+   stand alone at exactly this size. */
+@media (max-width: 359px) {
+  .brand-lockup .word { display: none; }
+  .brand-lockup { gap: 0; }
 }
 
 /* ---- footer ---- */
